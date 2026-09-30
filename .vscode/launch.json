@@ -1,0 +1,64 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "대상 확인",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/run.py",
+      "args": ["list", "--src", "${input:src}"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "기본 조회",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/run.py",
+      "args": ["run", "--src", "${input:src}", "--gu", "${input:gu}"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "114On 추가 조회",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/run.py",
+      "args": ["run114", "--job", "${input:job}", "--scope", "no_rep"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "설정파일로 대상 확인",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/run_config.py",
+      "args": ["확인"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "설정파일로 조회",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/run_config.py",
+      "args": ["조회"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "설정파일로 114On 추가 조회",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/run_config.py",
+      "args": ["114"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    }
+  ],
+  "inputs": [
+    { "id": "src", "type": "promptString", "description": "CSV 경로나 패턴 (예: C:/data/콜리스트_*.csv)" },
+    { "id": "gu", "type": "promptString", "description": "시군구. 여러 개면 쉼표로 (예: 중구,연수구)" },
+    { "id": "job", "type": "promptString", "description": "작업 ID (run 결과에 나온 24자리 또는 앞부분)" }
+  ]
+}

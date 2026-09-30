@@ -1,0 +1,12 @@
+# 용현동 시험 실행용 · python run_config.py 조회 --config 용현동_시험.toml
+src = ["../../대상 파일/콜리스트_인천광역시_미추홀구_2026-09-30.csv"]
+work = "work"
+out = "results"
+workers = 4
+skip_geo = false
+run_tag = ""
+scope114 = "no_rep"
+
+[["조회"]]
+"구" = ["미추홀구"]
+"동" = ["용현동"]

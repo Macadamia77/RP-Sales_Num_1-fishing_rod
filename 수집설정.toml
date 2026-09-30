@@ -1,0 +1,37 @@
+# 수집설정.toml · 조회 규칙에 쓰는 값. 매번 고치는 조회 범위는 조회설정.toml 에 있다
+# 여기 적힌 값은 원본 collector.js·naver.js·common.py 의 값과 같다. 항목을 지우면 이 값이 기본으로 쓰인다
+# 한글 키는 따옴표로 감싼다: "주안동" = ["관교"]
+
+[region]
+# 지금은 인천광역시만 가능. 판정 규칙(legacy/common.py 등)이 인천 주소 형식 기준이라서
+sido = "인천광역시"
+
+[region.extra_words]
+# 동별로 더하는 지역어. 관리사무소 이름을 비교할 때 이 글자는 지우고 비교한다
+# 구·동 이름에서 나오는 지역어(미추홀, 주안 등)는 자동으로 들어가므로 적지 않아도 된다
+# 키는 "동" (모든 구의 같은 이름 동) 또는 "구 동" (그 구의 동만)
+"주안동" = ["관교"]
+# 예: "연수구 송도동" = ["송도국제"]
+
+[urls]
+# 사이트 주소가 바뀌면 여기만 고친다
+kakao = "https://dapi.kakao.com/v2/local/search/"
+kb = "https://api.kbland.kr/land-complex/"
+# 집품 조회 주소. 결과 링크(zippoom.com)와 도메인이 달라 실제 사이트에서 확인이 필요함
+zippoom = "https://live.zippo-om.com/api/v1/buildings/search/autoComplete?keyword="
+naver_geo = "https://maps.apigw.ntruss.com"
+naver_hub = "https://naverapihub.apigw.ntruss.com"
+one114 = "https://www.114.co.kr/action/search"
+
+[timing]
+# 요청 사이 간격(초). 줄이면 빨라지지만 차단되거나 호출 한도에 걸릴 수 있다 (원래 값보다 줄이면 실행할 때 주의가 뜸)
+kb_zippoom_gap = 0.35
+one114_gap = 4.5
+naver_geo_gap = 0.12
+naver_local_gap = 0.15
+
+[limits]
+# 한 단계에서 일반 오류가 이 건수가 되면 멈춘다 (키 오류·호출 한도 초과·차단은 1건에서 바로 멈춤)
+max_errors = 3
+# 진행 상황을 몇 건마다 출력할지
+progress_every = 20
