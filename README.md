@@ -173,5 +173,5 @@ docs/                      코드구조_설명서.html(사람용), 코드구조_
 
 1. `python tools/check_legacy.py <원본 merge.py 등이 있는 폴더>`
    legacy 폴더의 세 파일은 프로젝트 문서에서 옮겨 적은 것이다. 일부러 고친 곳(common.py 한 곳)은 반영해서 비교하고, 그 밖에 한 글자라도 다르면 다른 줄을 보여 준다.
-2. `python -m unittest discover -s tests` · 39개 시험이 모두 통과해야 한다. 원본 JS 비교 시험에는 Node.js가 필요하다(없으면 그 시험만 건너뜀).
+2. `python -m unittest discover -s tests` · 40개 시험이 모두 통과해야 한다. 원본 JS 비교 시험에는 Node.js가 필요하다(없으면 그 시험만 건너뜀).
 3. 작은 동 하나로 `확인` → `조회`를 해 보고, 결과를 기존 결과와 비교한다.
