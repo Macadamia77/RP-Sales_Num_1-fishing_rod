@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>옵시디언 LLM 위키 가이드</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f8fa;--card:#ffffff;--ink:#1a1d21;--sub:#59616b;--line:#e2e5e9;--soft:#f1f3f5;
+  --acc:#1d5f8a;--accbg:#e4eff7;--warn:#9a5a00;--warnbg:#fdf1de;--bad:#a23b2c;--badbg:#fbe7e3;
+  --ok:#2d7449;--okbg:#e2f2e8;--code:#f3f4f6;--codeink:#24292f;--shadow:0 1px 2px rgba(0,0,0,.04);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  color-scheme:dark;--bg:#111417;--card:#191d22;--ink:#e7e9ec;--sub:#9aa3ad;--line:#2b3138;--soft:#20252b;
+  --acc:#76b7e0;--accbg:#16303f;--warn:#f0b35c;--warnbg:#382a14;--bad:#f08a7a;--badbg:#3a1f1b;
+  --ok:#79c89a;--okbg:#17301f;--code:#20252b;--codeink:#dfe3e8;--shadow:none}}
+:root[data-theme="dark"]{
+  color-scheme:dark;--bg:#111417;--card:#191d22;--ink:#e7e9ec;--sub:#9aa3ad;--line:#2b3138;--soft:#20252b;
+  --acc:#76b7e0;--accbg:#16303f;--warn:#f0b35c;--warnbg:#382a14;--bad:#f08a7a;--badbg:#3a1f1b;
+  --ok:#79c89a;--okbg:#17301f;--code:#20252b;--codeink:#dfe3e8;--shadow:none}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:16px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans KR","Pretendard","Malgun Gothic","Apple SD Gothic Neo",sans-serif;font-size:15.5px;line-height:1.75;word-break:keep-all;overflow-wrap:anywhere}
+a{color:var(--acc)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px;display:grid;grid-template-columns:240px minmax(0,1fr);gap:40px}
+nav.toc{position:sticky;top:0;align-self:start;max-height:100vh;overflow:auto;padding:28px 0 28px}
+nav.toc h2{font-size:12px;letter-spacing:.06em;color:var(--sub);margin:0 0 8px;font-weight:700}
+nav.toc ol{list-style:none;margin:0;padding:0}
+nav.toc li a{display:block;padding:5px 10px;border-radius:6px;text-decoration:none;color:var(--sub);font-size:13.5px;line-height:1.45}
+nav.toc li a:hover{background:var(--soft);color:var(--ink)}
+nav.toc li.sub a{padding-left:22px;font-size:12.5px}
+main{padding:28px 0 80px;min-width:0}
+header.top{margin-bottom:28px}
+header.top h1{font-size:28px;line-height:1.35;margin:0 0 8px}
+header.top p{color:var(--sub);margin:0}
+.meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.chip{display:inline-block;background:var(--soft);color:var(--sub);border-radius:999px;padding:2px 10px;font-size:12.5px}
+.chip.acc{background:var(--accbg);color:var(--acc)}
+.chip.warn{background:var(--warnbg);color:var(--warn)}
+.chip.bad{background:var(--badbg);color:var(--bad)}
+.chip.ok{background:var(--okbg);color:var(--ok)}
+section{margin:0 0 56px}
+h2.sec{font-size:22px;line-height:1.4;margin:0 0 6px;padding-top:6px}
+h2.sec .no{color:var(--acc);margin-right:8px}
+p.lead{color:var(--sub);margin:0 0 18px}
+h3{font-size:17.5px;margin:30px 0 10px}
+h4{font-size:15.5px;margin:20px 0 8px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow);margin:14px 0}
+.key{border-left:4px solid var(--acc)}
+.key h3{margin-top:0}
+ul,ol{padding-left:22px;margin:8px 0}
+li{margin:3px 0}
+.callout{border-radius:10px;padding:12px 16px;margin:14px 0;font-size:14.5px}
+.callout b.t{display:block;margin-bottom:2px}
+.callout.info{background:var(--accbg)}
+.callout.warn{background:var(--warnbg)}
+.callout.bad{background:var(--badbg)}
+.callout.ok{background:var(--okbg)}
+.tw{overflow-x:auto;margin:12px 0;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:14px;line-height:1.6}
+th,td{padding:9px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:var(--soft);font-weight:700;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.n{white-space:nowrap;font-weight:700;color:var(--acc)}
+code{font-family:"JetBrains Mono",Consolas,"D2Coding",monospace;font-size:.88em;background:var(--code);color:var(--codeink);padding:1px 5px;border-radius:4px}
+pre{background:var(--code);color:var(--codeink);border-radius:10px;padding:14px 16px;overflow-x:auto;font-size:13px;line-height:1.6;margin:12px 0}
+pre code{background:none;padding:0;font-size:inherit}
+.flow{list-style:none;padding:0;margin:16px 0;counter-reset:f}
+.flow li{position:relative;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 16px 12px 64px;margin:0 0 22px}
+.flow li:after{content:"↓";position:absolute;left:50%;bottom:-21px;color:var(--sub);font-size:14px}
+.flow li:last-child:after{content:none}
+.flow li .tag{position:absolute;left:14px;top:12px;width:38px;height:24px;border-radius:6px;background:var(--accbg);color:var(--acc);font-weight:700;font-size:12.5px;display:flex;align-items:center;justify-content:center}
+.flow li .tag.j{background:var(--okbg);color:var(--ok)}
+.flow li .tag.o{background:var(--soft);color:var(--sub)}
+.flow li b{display:block}
+.flow li span{color:var(--sub);font-size:14px}
+.fix{background:var(--card);border:1px solid var(--line);border-radius:12px;margin:14px 0;overflow:hidden}
+.fix .hd{display:flex;gap:10px;align-items:baseline;padding:12px 16px;background:var(--soft);border-bottom:1px solid var(--line)}
+.fix .hd .id{font-weight:700;color:var(--acc);white-space:nowrap}
+.fix .hd .ttl{font-weight:700}
+.fix .bd{padding:10px 16px 14px;display:grid;grid-template-columns:96px minmax(0,1fr);gap:6px 14px;font-size:14.5px}
+.fix .bd .k{color:var(--sub);font-weight:700}
+.badge{display:inline-block;font-size:11.5px;font-weight:700;border-radius:5px;padding:0 6px;margin-left:6px;vertical-align:2px;white-space:nowrap;flex-shrink:0}
+.badge.fixd{background:var(--warnbg);color:var(--warn)}
+.badge.add{background:var(--okbg);color:var(--ok)}
+.badge.off{background:var(--okbg);color:var(--ok)}
+.badge.unoff{background:var(--badbg);color:var(--bad)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.mini{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.mini b{display:block;margin-bottom:4px}
+.muted{color:var(--sub)}
+hr{border:0;border-top:1px solid var(--line);margin:28px 0}
+.step{background:var(--card);border:1px solid var(--line);border-radius:12px;margin:16px 0;overflow:hidden;box-shadow:var(--shadow)}
+.step .hd{display:flex;gap:10px;align-items:baseline;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--soft)}
+.step .hd .id{font-weight:700;color:var(--acc);white-space:nowrap}
+.step .hd .ttl{font-weight:700;font-size:16px}
+.step .hd .when{margin-left:auto;font-size:12.5px;color:var(--sub);text-align:right}
+.step .row{display:grid;grid-template-columns:72px minmax(0,1fr);gap:14px;padding:10px 16px;border-bottom:1px dashed var(--line);font-size:14.5px}
+.step .row:last-child{border-bottom:0}
+.step .row .k{font-weight:700;font-size:13px;border-radius:6px;text-align:center;align-self:start;padding:2px 0}
+.step .row .k.c{background:var(--accbg);color:var(--acc)}
+.step .row .k.f{background:var(--warnbg);color:var(--warn)}
+.step .row .k.s{background:var(--okbg);color:var(--ok)}
+.step .row .k.o{background:var(--soft);color:var(--sub)}
+.step .row .k.x{background:var(--badbg);color:var(--bad)}
+.step .row ul,.step .row ol{margin:2px 0}
+.part{font-size:13px;font-weight:700;letter-spacing:.08em;color:var(--acc);margin:0 0 4px}
+.chain{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px 0;margin:14px 0}
+.chain div{display:grid;grid-template-columns:150px minmax(0,1fr);gap:12px;padding:8px 16px;font-size:14.5px;border-bottom:1px solid var(--line)}
+.chain div:last-child{border-bottom:0}
+.chain div b{color:var(--acc)}
+.chain div.end b{color:var(--ok)}
+@media (max-width:900px){.step .row,.chain div{grid-template-columns:minmax(0,1fr);gap:4px}.step .row .k{justify-self:start;padding:2px 10px}.step .hd{flex-wrap:wrap}.step .hd .when{margin-left:0;text-align:left}}
+footer{color:var(--sub);font-size:13px;border-top:1px solid var(--line);padding-top:16px}
+@media (max-width:900px){
+  .wrap{grid-template-columns:minmax(0,1fr);gap:0}
+  nav.toc{position:static;max-height:none;padding:20px 0 0;border-bottom:1px solid var(--line)}
+  nav.toc ol{columns:2;column-gap:12px}
+  header.top h1{font-size:23px}
+  .fix .bd{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:520px){nav.toc ol{columns:1}}
+@media print{nav.toc{display:none}.wrap{grid-template-columns:1fr}.card,.fix,.flow li{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<nav class="toc" aria-label="목차">
+  <h2>목차</h2>
+  <ol>
+    <li><a href="#summary">결론</a></li>
+    <li><a href="#s1">1. 볼트 만들기</a></li>
+    <li><a href="#s2">2. LLM이 읽기 좋은 노트</a></li>
+    <li class="sub"><a href="#s2-files">읽힐 파일</a></li>
+    <li class="sub"><a href="#s2-tree">폴더 구조</a></li>
+    <li class="sub"><a href="#s2-rules">노트 쓰는 규칙</a></li>
+    <li><a href="#s3">3. 동기화</a></li>
+    <li><a href="#s4">4. 보안 · 꼭 지킬 것</a></li>
+    <li><a href="#s5">5. LLM 플러그인 설정</a></li>
+    <li><a href="#s6">6. 잘 묻는 법</a></li>
+    <li><a href="#s7">7. 유지 관리</a></li>
+    <li><a href="#appx">부록 · 주소 묶음과 CSV 주소</a></li>
+  </ol>
+</nav>
+
+<main>
+<header class="top">
+  <h1>옵시디언으로 LLM 위키 만들기</h1>
+  <p>이 저장소의 설명서를 옵시디언(Obsidian)에 모아 두고, 옵시디언 안에서 LLM에게 "이 설명서 기준으로 답해 줘"라고 묻는 방법입니다.</p>
+  <div class="meta">
+    <span class="chip acc">작성 2026-10-07</span>
+    <span class="chip warn">플러그인 메뉴 이름은 버전에 따라 바뀔 수 있음 · 설치 화면 안내 우선</span>
+  </div>
+</header>
+
+<!-- 결론 -->
+<section id="summary">
+  <h2 class="sec">결론</h2>
+  <p class="lead">목적별로 권하는 방법입니다.</p>
+  <div class="tw"><table>
+    <tr><th>목적</th><th>권하는 방법</th></tr>
+    <tr><td><b>노트 보관과 연결</b></td><td><b>이 저장소(repo) 폴더를 그대로 옵시디언 볼트로 연다.</b> 설명서가 코드와 같은 곳에 있어 한쪽만 고쳐지는 일이 줄어든다</td></tr>
+    <tr><td><b>PC·폰 동기화</b></td><td>Obsidian Git 플러그인으로 GitHub와 동기화 (폰은 느리고 제약이 있음, <a href="#s3">3장</a>)</td></tr>
+    <tr><td><b>설명서에 질문</b></td><td>옵시디언 LLM 플러그인(예: Copilot for Obsidian, Smart Connections) + API 키</td></tr>
+    <tr><td><b>설정 없이 바로 질문</b></td><td>지금처럼 이 저장소를 연 Claude Code 세션에 묻는다. 코드와 설명서를 둘 다 읽고 답한다</td></tr>
+  </table></div>
+  <div class="callout warn"><b class="t">비용</b>옵시디언 LLM 플러그인은 <b>별도 API 키(사용량 과금)</b>가 필요합니다. Claude 구독과는 별개입니다. 설정이 부담되면 마지막 줄의 방법이 가장 간단합니다.</div>
+</section>
+
+<!-- 1 -->
+<section id="s1">
+  <h2 class="sec"><span class="no">1</span>볼트 만들기</h2>
+  <ol class="flow">
+    <li><span class="tag">1</span><b>옵시디언 설치</b><span><a href="https://obsidian.md">obsidian.md</a>에서 PC용을 받습니다.</span></li>
+    <li><span class="tag">2</span><b>저장소 내려받기</b><span>PC 터미널에서 <code>git clone https://github.com/Macadamia77/RP-Sales_Num_1-fishing_rod.git</code></span></li>
+    <li><span class="tag">3</span><b>볼트로 열기</b><span>옵시디언 시작 화면 → <b>Open folder as vault</b> → 내려받은 폴더 선택</span></li>
+    <li><span class="tag j">먼저</span><b><code>.gitignore</code>에 두 줄 추가 후 커밋</b><span><code>.obsidian/</code>와 <code>*.csv</code>. 이유는 <a href="#s4">4장</a>.</span></li>
+  </ol>
+  <div class="callout info"><b class="t">설명서 폴더만 볼트로 열어도 됨</b>저장소 전체가 부담되면 <code>설명서/</code> 폴더만 볼트로 열 수 있습니다. 다만 그러면 LLM이 코드(<code>pipeline/</code>, <code>legacy/</code>)는 읽지 못합니다.</div>
+</section>
+
+<!-- 2 -->
+<section id="s2">
+  <h2 class="sec"><span class="no">2</span>LLM이 읽기 좋은 노트로 정리하기</h2>
+
+  <h3 id="s2-files">HTML은 노트로 열리지 않는다 · 읽힐 파일</h3>
+  <p>옵시디언은 마크다운(<code>.md</code>)을 노트로 다루고, LLM 플러그인도 보통 <code>.md</code>만 색인합니다. HTML 설명서는 사람이 브라우저로 보는 용도로 두고, <b>LLM에게는 AI용 md 파일을 읽힙니다.</b></p>
+  <div class="tw"><table>
+    <tr><th>파일</th><th>LLM 위키에서의 역할</th></tr>
+    <tr><td><code>설명서/수집기_상세_설명서_AI용.md</code></td><td>데이터 흐름 Q&amp;A, 단계별 요청·응답, 실행 추적</td></tr>
+    <tr><td><code>설명서/수집기_로직_설명서_AI용.md</code></td><td>판정 규칙 전체 (순위, 단어 목록, 이름 비교)</td></tr>
+    <tr><td><code>docs/코드구조_설명서_AI용.md</code></td><td>파일 지도와 실행 흐름</td></tr>
+    <tr><td><code>검수보고서.md</code></td><td>기존 코드 문제와 위험</td></tr>
+    <tr><td><code>README.md</code></td><td>실행 방법</td></tr>
+    <tr><td><code>설명서/옵시디언_LLM위키_가이드.md</code></td><td>이 가이드의 md 판</td></tr>
+  </table></div>
+  <div class="callout warn"><b class="t">중복 파일 정리</b><code>설명서/</code>와 <code>docs/</code>에 같은 이름의 <code>코드구조_설명서_AI용.md</code>가 두 개 있습니다. LLM이 같은 내용을 두 번 읽으면 답이 흔들릴 수 있으니 하나만 남기거나, 플러그인 설정에서 한쪽 폴더를 색인 제외로 두세요.</div>
+
+  <h3 id="s2-tree">권하는 폴더 구조 (새로 쓸 노트)</h3>
+<pre><code>위키/
+  00_목차.md      ← 모든 노트로 가는 링크 모음. LLM에게 "목차부터 보라"고 할 때 씀
+  용어/            ← 한 용어 한 노트: 주소 묶음, 장소 풀, 이름 대상, 번호 대상, 건물 내 점포 …
+  과정/            ← P1~P9 한 과정 한 노트
+  결정/            ← "왜 이렇게 했나" 기록 (예: 부동산 DB는 공공데이터로)
+  질문/            ← 자주 묻는 질문과 답 (대화에서 나온 Q&amp;A를 옮김)</code></pre>
+
+  <h3 id="s2-rules">노트 쓰는 규칙</h3>
+  <p>LLM 플러그인은 노트를 조각내서 질문과 가까운 조각만 읽습니다. 그래서 <b>노트 한 조각만 봐도 뜻이 통하게</b> 씁니다.</p>
+  <div class="grid2">
+    <div class="mini"><b>한 노트에 한 주제</b>"주소 묶음" 노트에는 주소 묶음만.</div>
+    <div class="mini"><b>첫 줄에 한 문장 정의</b>예: "주소 묶음은 타겟 건물을 가리키는 정규화된 도로명·지번 목록이다."</div>
+    <div class="mini"><b>근거를 붙인다</b>코드 위치와 커밋. 예: <code>pipeline/providers/kakao.py:122-134 (main e1e3c70)</code></div>
+    <div class="mini"><b>용어는 링크로</b><code>[[주소 묶음]]</code>, <code>[[장소 풀]]</code>. 그래프에서 관계가 보이고, 일부 플러그인은 링크된 노트도 함께 읽는다.</div>
+    <div class="mini"><b>맞다/틀리다를 분명히</b>오해하기 쉬운 점은 "오해: … / 실제: …"로.</div>
+    <div class="mini"><b>머리말(frontmatter)</b>갱신 날짜와 근거 커밋을 둔다.</div>
+  </div>
+  <h4>노트 틀 예시</h4>
+<pre><code>---
+tags: [용어]
+근거커밋: e1e3c70
+updated: 2026-10-07
+---
+# 주소 묶음
+
+주소 묶음은 타겟 건물을 가리키는 정규화된 도로명 목록(R)과 지번 목록(J)이다.
+
+- 들어가는 것: CSV 도로명·지번 + 카카오 주소검색 첫 결과의 공식 도로명·지번 + (필요하면) 네이버 지오코딩 주소
+- 쓰는 곳: [[장소 풀]]에서 주소 일치 판정, [[건물 내 점포]] 판단
+- 오해: 다른 검색 결과들의 주소 → 실제: 같은 건물의 다른 표기만
+- 근거: `pipeline/providers/kakao.py:122-134`</code></pre>
+</section>
+
+<!-- 3 -->
+<section id="s3">
+  <h2 class="sec"><span class="no">3</span>동기화 · PC ↔ 폰 ↔ GitHub</h2>
+  <div class="step">
+    <div class="hd"><span class="id">Git</span><span class="ttl">Obsidian Git 플러그인</span></div>
+    <div class="row"><span class="k c">설치</span><div>설정 → 커뮤니티 플러그인 → 찾아보기 → "Git" 검색 → 설치·켜기</div></div>
+    <div class="row"><span class="k s">동작</span><div>일정 시간마다 자동 커밋·푸시·풀을 설정할 수 있습니다.</div></div>
+    <div class="row"><span class="k x">폰</span><div>모바일에서도 동작하지만 느리고 불안정할 수 있습니다. 폰에서는 읽기 위주로 쓰거나, 유료 Obsidian Sync를 쓰는 방법도 있습니다.</div></div>
+    <div class="row"><span class="k o">권장</span><div>자동 커밋을 켜면 의미 없는 커밋이 쌓입니다. 설명서 수정은 PR로 하고, 개인 메모만 자동 커밋하도록 나누세요.</div></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section id="s4">
+  <h2 class="sec"><span class="no">4</span>보안 · 꼭 지킬 것</h2>
+  <div class="callout bad"><b class="t">API 키가 저장소에 올라가지 않게</b>LLM 플러그인은 API 키를 <code>.obsidian/plugins/&lt;플러그인&gt;/data.json</code>에 저장합니다. 볼트가 저장소라면 <code>.obsidian/</code>을 <code>.gitignore</code>에 넣지 않는 한 키가 GitHub에 올라갑니다. <b>지금 <code>.gitignore</code>에는 <code>.obsidian/</code>이 없습니다.</b></div>
+  <div class="callout bad"><b class="t">콜리스트 CSV를 볼트에 두지 않기</b>지금 <code>.gitignore</code>는 <code>work/</code>, <code>results/</code>, <code>.env</code>만 막고 <code>*.csv</code>는 막지 않습니다. 고객 데이터가 담긴 CSV를 볼트(=저장소) 안에 두면 커밋될 수 있습니다.</div>
+  <div class="callout warn"><b class="t">LLM에 보내는 내용</b>플러그인은 질문할 때 관련 노트 조각을 외부 LLM 서비스로 보냅니다. 설명서에는 실제 전화번호나 고객 정보를 적지 않습니다. 지금 설명서에 있는 번호는 가짜 테스트 데이터입니다.</div>
+<pre><code># .gitignore 에 추가
+.obsidian/
+*.csv</code></pre>
+</section>
+
+<!-- 5 -->
+<section id="s5">
+  <h2 class="sec"><span class="no">5</span>LLM 플러그인 설정</h2>
+  <p class="lead">대표적인 두 가지입니다. 하나만 고르면 됩니다.</p>
+  <div class="tw"><table>
+    <tr><th>플러그인</th><th>특징</th></tr>
+    <tr><td><b>Copilot for Obsidian</b></td><td>채팅 창에서 볼트 전체를 근거로 묻는 모드(Vault QA)가 있음. Claude·OpenAI·로컬 모델(Ollama) 등 선택</td></tr>
+    <tr><td><b>Smart Connections</b></td><td>노트끼리 관련도를 보여 주고, 노트를 근거로 채팅</td></tr>
+  </table></div>
+  <h3>설정 순서 (공통)</h3>
+  <ol class="flow">
+    <li><span class="tag">1</span><b>설치</b><span>설정 → 커뮤니티 플러그인 → 제한 모드 끄기 → 찾아보기 → 플러그인 검색 → 설치 → 켜기</span></li>
+    <li><span class="tag">2</span><b>채팅 모델</b><span>플러그인 설정에서 API 키 입력 (예: Anthropic 키 → Claude 모델 선택)</span></li>
+    <li><span class="tag">3</span><b>임베딩(색인) 모델</b><span>볼트 전체를 근거로 답하려면 노트를 미리 색인해야 합니다. Anthropic은 임베딩 API를 제공하지 않으므로, 채팅을 Claude로 하더라도 색인은 다른 제공자(OpenAI 등)나 로컬 모델로 설정해야 할 수 있습니다.</span></li>
+    <li><span class="tag">4</span><b>색인 제외 폴더</b><span><code>pipeline/</code>, <code>legacy/</code>, <code>tests/</code>(코드까지 묻지 않을 때), 중복 설명서 한쪽</span></li>
+    <li><span class="tag j">5</span><b>색인 실행 → 질문</b><span>채팅 창에서 볼트 질문 모드로 묻습니다.</span></li>
+  </ol>
+</section>
+
+<!-- 6 -->
+<section id="s6">
+  <h2 class="sec"><span class="no">6</span>잘 묻는 법</h2>
+  <p>플러그인 설정의 기본 지시(시스템 프롬프트)에 이런 내용을 넣어 두면 답이 안정됩니다.</p>
+<pre><code>너는 이 볼트의 설명서를 근거로만 답한다.
+답마다 근거 노트 이름과, 노트에 적힌 코드 위치를 함께 적는다.
+노트에 없는 내용은 "설명서에 없음"이라고 말하고 추측하지 않는다.
+용어는 [[00_목차]]와 용어 노트의 정의를 따른다.</code></pre>
+  <h3>질문 예</h3>
+  <ul>
+    <li>"건물 내 점포는 어떤 기준으로 정해? 근거 노트와 코드 줄도 알려 줘."</li>
+    <li>"번호만 대상인 건물에서 KB부동산을 조회해? 집품은?"</li>
+    <li>"중개업소 8곳 한도에 건물 안 중개업소가 들어가?"</li>
+  </ul>
+</section>
+
+<!-- 7 -->
+<section id="s7">
+  <h2 class="sec"><span class="no">7</span>유지 관리</h2>
+  <ul>
+    <li><b>코드가 진실, 노트는 요약.</b> 노트와 코드가 다르면 코드를 기준으로 노트를 고칩니다.</li>
+    <li>코드를 고치는 PR에서 관련 AI용 md도 같이 고치고, 노트 머리말의 <code>근거커밋</code>을 갱신합니다.</li>
+    <li>대화에서 새로 알게 된 내용(예: 아래 "주소 묶음과 CSV 주소")은 <code>질문/</code> 노트로 옮겨 둡니다.</li>
+  </ul>
+</section>
+
+<!-- 부록 -->
+<section id="appx">
+  <h2 class="sec">부록 · 주소 묶음과 CSV 주소</h2>
+  <p class="lead">질문: "주소 묶음의 도로명·지번은 이미 콜리스트 CSV에 있지 않나?"</p>
+  <div class="card key">
+    <ul style="margin:0">
+      <li><b>맞습니다. CSV의 도로명·지번이 주소 묶음의 출발점이고, 그대로 들어갑니다.</b></li>
+      <li>카카오 주소검색은 여기에 <b>CSV에 없는 표기만 더합니다.</b> 정규화한 뒤 CSV와 같으면 아무것도 늘지 않습니다.</li>
+    </ul>
+  </div>
+  <h3>테스트 데이터 5건 실제 실행 결과</h3>
+  <div class="tw"><table>
+    <tr><th>건물</th><th>CSV 도로명 / 지번</th><th>주소 묶음</th><th>카카오가 더한 것</th></tr>
+    <tr><td class="n">101</td><td>주승로 247 / 관교동 13-11</td><td>R {주승로 247}, J {관교동 13-11, <b>관교동 13-8</b>}</td><td>같은 건물의 다른 지번</td></tr>
+    <tr><td class="n">102</td><td>인하로411번길 49 / 관교동 316-6</td><td>CSV와 같음</td><td>없음</td></tr>
+    <tr><td class="n">103</td><td>경원대로 627 / 관교동 500</td><td>CSV와 같음</td><td>없음</td></tr>
+    <tr><td class="n">104</td><td>경원대로640번길 6-39 / 관교동 505-8</td><td>CSV와 같음</td><td>없음</td></tr>
+    <tr><td class="n">105</td><td>(도로명 없음) / 관교동 12-3</td><td>R {<b>주승로 250</b>}, J {관교동 12-3}</td><td>CSV에 없던 도로명</td></tr>
+  </table></div>
+  <ul>
+    <li>카카오 주소검색이 주소 묶음에 보태는 경우는 두 가지입니다. ① CSV에 도로명이나 지번이 비어 있을 때 채움 ② 같은 건물의 다른 지번·도로명을 알려 줄 때.</li>
+    <li>카카오 주소검색은 주소 묶음 말고도 <b>좌표</b>와 <b>공식 건물명</b>을 얻는 데 쓰이므로, 주소 묶음 때문만으로 부르는 것은 아닙니다.</li>
+    <li>실제 데이터에서 ①②가 얼마나 자주 생기는지는 아직 모릅니다. 실제 실행 뒤 <code>work/jobs/&lt;작업&gt;/data/&lt;구_동&gt;/A.json</code>의 <code>R</code>·<code>J</code> 개수를 세면 확인할 수 있습니다.</li>
+  </ul>
+</section>
+
+<footer>md 판: <code>설명서/옵시디언_LLM위키_가이드.md</code> · 옵시디언 볼트에서는 md 판을 노트로 씁니다.</footer>
+</main>
+</div>
+</body>
+</html>
