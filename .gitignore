@@ -5,3 +5,5 @@ results/
 .env
 .last_job.json
 *.tmp
+.obsidian/
+*.csv
