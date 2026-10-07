@@ -202,8 +202,10 @@ class RunConfigTest(TmpCase):
         with self.assertRaises(UsageError) as c:
             run_config.load_config(bad)
         self.assertIn('따옴표', str(c.exception))
+        # 조회설정.toml 은 매번 고치는 파일이라 내용(구·동)은 보지 않고, 지금 들어 있는 값이 문법·항목 검사를 통과하는지만 본다
         shipped = run_config.load_config(os.path.join(ROOT, '조회설정.toml'))
-        self.assertEqual([f.gu for f in shipped['filters']], [['중구'], ['미추홀구']])
+        self.assertTrue(shipped['src'])
+        self.assertTrue(shipped['filters'])
         env = os.path.join(self.tmp, '.env')
         with open(env, 'w', encoding='utf-8') as f:
             f.write('# 주석\nNCP_GEO_ID="from-env-file"\nEMPTY=\n')
