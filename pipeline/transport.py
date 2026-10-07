@@ -90,6 +90,8 @@ class HttpTransport(_Base):
     def _session(self):
         if not hasattr(self.tl, 's'):
             self.tl.s = self.requests.Session()
+            # KB부동산·114On 은 requests 기본 User-Agent(python-requests/…)면 연결을 끊는다. 원본처럼 브라우저 값으로 보냄
+            self.tl.s.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
         return self.tl.s
 
     def begin(self, stage, key):
