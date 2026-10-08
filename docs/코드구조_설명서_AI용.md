@@ -64,7 +64,7 @@
 | 파일 | 줄 | 책임 | 주요 이름 |
 |---|---|---|---|
 | `pipeline/stages.py` | 104 | 단계 실행기. 성공 건 건너뛰기, 건마다 저장, 멈춤 규칙, 동시 실행(카카오 최대 4), 진행 표시 | `run_stage` |
-| `pipeline/transport.py` | 166 | HTTP. 상태 코드를 오류 종류로 바꾸고, 응답 기록·재생을 맡는다. 리다이렉트는 따라가지 않는다 | `interpret`, `HttpTransport`, `ReplayTransport` |
+| `pipeline/transport.py` | 166 | HTTP. 상태 코드를 오류 종류로 바꾸고, 응답 기록·재생을 맡는다. 리다이렉트는 따라가지 않는다. 세션 기본 User-Agent를 브라우저 값으로 둔다(2026-10-07 PR #6, +2줄. KB·114On이 `python-requests` UA를 끊음) | `interpret`, `HttpTransport`, `ReplayTransport` |
 | `pipeline/errors.py` | 57 | 오류 종류. FatalError는 즉시 멈춤, 나머지는 건 단위 실패 | `UsageError`, `FatalError`(Auth, RateLimit, Blocked, UnexpectedResponse), `RetryableError`, `RequestError`, `StageStopped` |
 | `pipeline/storage.py` | 141 | SQLite 저장소, OS 파일 잠금, 코드 해시, 원자적 JSON 쓰기 | `Store`, `JobLock`, `code_hash`, `write_json` |
 | `pipeline/credentials.py` | 89 | 키를 환경변수에서만 읽음. 키 가리기, 결과 폴더(xlsx·zip 내부 포함) 키 검사 | `get`, `mask`, `mask_headers`, `scan` |

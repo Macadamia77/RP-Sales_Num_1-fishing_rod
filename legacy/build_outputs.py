@@ -32,10 +32,12 @@ def links_for(x):
     q = x['road'] or x['jibun']
     g = x.get('g')
     zq = q.replace('인천광역시', '인천')
+    kb = x.get('kb')
     return {
         '카카오맵': 'https://map.kakao.com/?q=' + quote(q),
         '카카오 로드뷰': f'https://map.kakao.com/link/roadview/{g[1]},{g[0]}' if g else '',
         '네이버지도': 'https://map.naver.com/p/search/' + quote(q),
+        'KB부동산': 'https://kbland.kr/c/' + str(kb['no']) if kb and kb.get('no') else '',
         '집품': 'https://zippoom.com/search/' + quote(zq) + '?searchWithAddress=false',
         '114On': 'https://www.114.co.kr/search/result/all?query=' + quote(q),
     }
@@ -310,7 +312,7 @@ def card(x, n, mode):
         f1.append(('검수 후보', a(h['link'], f"{h['v']} {h['name']}") + f' <span class="jib">{E(h["reason"])}' + (f' · {h["d"]}m' if h.get('d') is not None else '') + '</span>'))
     if f1: body.append('<div class="f1">' + ''.join(f'<b>{E(k)}</b><div>{v}</div>' for k, v in f1) + '</div>')
     body.append(f'<div class="meta">{"".join(chips)}</div>')
-    ls = [f'<a href="{E(L[k])}" target="_blank" rel="noopener">{k}</a>' if L[k] else f'<a class="off">{k}</a>' for k in ['카카오 로드뷰', '카카오맵', '네이버지도', '집품', '114On']]
+    ls = [f'<a href="{E(L[k])}" target="_blank" rel="noopener">{k}</a>' if L[k] else f'<a class="off">{k}</a>' for k in ['카카오 로드뷰', '카카오맵', '네이버지도', 'KB부동산', '집품', '114On']]
     ls.append(f'<button type="button" data-copy="{E(q)}">주소 복사</button>')
     srch = ' '.join([x['road'], x['jibun'], (x.get('nm') or {}).get('v', ''), x['n0'], str(x['i']), x['grade']] + flags).lower()
     sec = 'h' if x.get('human') else 'r'

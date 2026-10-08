@@ -13,7 +13,11 @@ pip install -r requirements.txt
 LibreOffice (선택) · 엑셀 수식 재계산용. 없으면 재계산만 건너뜀
 ```
 
-키는 `.env.example`을 `.env`로 복사한 뒤 값을 적는다. `.env`는 `.gitignore`에 들어 있다.
+**Windows에서 `python`이 안 잡힐 때** · 「Python was not found; run without arguments to install from the Microsoft Store」가 나오면 PATH의 `python`이 Microsoft Store 바로가기다. 설치된 파이썬을 전체 경로로 부른다(Anaconda 예: `C:\Users\<사용자>\anaconda3\python.exe run_config.py 확인`). VS Code F5는 VS Code에서 고른 인터프리터를 쓴다. 한글 출력이 깨지면 `PYTHONIOENCODING=utf-8`을 준다.
+
+**결과 폴더 이름 바꾸기** · `조회설정.toml`의 `out`(기본 `results`)을 바꾼다. 예: `out = "결과물"`. 기본값이 아닌 폴더를 쓰면 결과 파일이 git에 올라가지 않도록 `.gitignore`에도 추가한다.
+
+키는 루트에 `.env` 파일을 만들어 아래 이름으로 값을 적는다. `.env`는 `.gitignore`에 들어 있다.
 
 ```
 KAKAO_REST_KEY=
@@ -149,7 +153,6 @@ work/jobs/<작업ID>/                            작업 상태 (지우지 말 �
 run.py, run_config.py      실행 입구
 조회설정.toml              조회 범위 (매번 고침)
 수집설정.toml              조회 규칙 값: 지역어, 사이트 주소, 간격, 오류 한도
-.env.example               키 이름
 pipeline/                  새 코드
   cli.py service.py        명령과 작업 흐름
   selection.py prepare.py  CSV 읽기, 조회 범위, 입력 준비

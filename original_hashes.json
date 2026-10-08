@@ -23,6 +23,24 @@
     }
    ],
    "sha256_after": "f2321b0874d21f914ea544478ca33b9fec5d2f3cf29e0dcade7c03b9c18baa6a"
+  },
+  "build_outputs.py": {
+   "why": "HTML 카드 링크 버튼에 KB부동산 추가 (2026-10-08). KB 단지를 찾은 건물만 kbland.kr/c/단지번호, 없으면 흐린 버튼",
+   "edits": [
+    {
+     "old": "    zq = q.replace('인천광역시', '인천')\n    return {",
+     "new": "    zq = q.replace('인천광역시', '인천')\n    kb = x.get('kb')\n    return {"
+    },
+    {
+     "old": "        '네이버지도': 'https://map.naver.com/p/search/' + quote(q),\n",
+     "new": "        '네이버지도': 'https://map.naver.com/p/search/' + quote(q),\n        'KB부동산': 'https://kbland.kr/c/' + str(kb['no']) if kb and kb.get('no') else '',\n"
+    },
+    {
+     "old": "for k in ['카카오 로드뷰', '카카오맵', '네이버지도', '집품', '114On']]",
+     "new": "for k in ['카카오 로드뷰', '카카오맵', '네이버지도', 'KB부동산', '집품', '114On']]"
+    }
+   ],
+   "sha256_after": "acbe61ea28d98a519fafec65238dd7e83108d486dcc0df57a313ab8bd8c0c957"
   }
  }
 }
