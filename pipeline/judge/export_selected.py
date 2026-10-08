@@ -7,8 +7,8 @@
     지표 시트(일부러 쓴 수식)를 뺀 모든 시트에서 수식 칸을 글자로 바꾼다
   · 수식 차단을 먼저 한 뒤에 LibreOffice로 지표 수식을 다시 계산한다 (LibreOffice가 없으면 건너뜀)
 
-사용 예
-  python export_selected.py --work <data 폴더> --gu 미추홀구 --dong 관교동 --out <결과 폴더> --date 2026-09-29
+사용 예 (pipeline/reporting.py 가 부름)
+  run(<data 폴더>, '미추홀구', '관교동', <결과 폴더>, '2026-09-29')
 """
 import argparse
 import os
@@ -19,7 +19,7 @@ from unittest import mock
 import pandas as pd
 from openpyxl import load_workbook
 
-import build_outputs
+from . import build_outputs
 
 FORMULA_SHEETS = ('지표',)
 
@@ -67,7 +67,7 @@ SETS = ['사람확인필요', '건물명번호_둘다미해결', '건물명만�
 
 
 def pick(res):
-    """build_outputs.main 과 같은 분류"""
+    """원래 build_outputs.main(단독 실행용, 2026-10-08 삭제)과 같은 분류"""
     nmU = lambda x: x['nt'] and not x.get('nm')  # noqa: E731
     phU = lambda x: x['pt'] and not x.get('ph')  # noqa: E731
     return {
@@ -79,14 +79,9 @@ def pick(res):
     }, nmU, phU
 
 
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument('--work', required=True)
-    ap.add_argument('--gu', required=True)
-    ap.add_argument('--dong', required=True)
-    ap.add_argument('--out', required=True)
-    ap.add_argument('--date', required=True)
-    a = ap.parse_args()
+def run(work, gu, dong, out, date):
+    """<work>/<구>_<동>/ 의 source.csv·results.json 으로 out 에 엑셀·HTML 5종을 만든다. 요약은 print 로 남김"""
+    a = argparse.Namespace(work=work, gu=gu, dong=dong, out=out, date=date)
     d = os.path.join(a.work, f'{a.gu}_{a.dong}')
     src = os.path.join(d, 'source.csv')
     res = build_outputs.load(os.path.join(d, 'results.json'), [])
@@ -115,6 +110,3 @@ def main():
         raise SystemExit('검증 실패 · 미해결 목록이 겹치거나 합집합이 공백 건물 수와 다름')
     print('검증 · 세 미해결 목록 겹침 없음 · 합집합이 공백 건물 수와 같음')
 
-
-if __name__ == '__main__':
-    main()

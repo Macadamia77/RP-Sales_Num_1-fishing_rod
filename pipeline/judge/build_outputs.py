@@ -1,9 +1,8 @@
 """결과 파일 생성 · 결과 엑셀 1개와 HTML 목록 5개를 만든다
 
-사용 예
-  python build_outputs.py --src 콜리스트.csv --work work --gu 미추홀구 --dong 주안동 --out out --date 2026-09-28
+export_selected.py 가 build_xlsx·page 를 부른다
 
-만드는 파일 · --out 폴더
+만드는 파일 · 결과 폴더
   콜리스트_{구}_{동}_재검색결과_{날짜}.xlsx
       지표 · 결과 · 근거_주소일치장소 · 근거_KB부동산·집품 · 검수_후보번호 시트
   {구}_{동}_사람확인필요_목록_{날짜}.html
@@ -18,13 +17,13 @@ HTML 정렬 규칙 · 모든 목록 공통
 
 원본 파일은 읽기만 하고, 결과는 항상 새 파일로 씀
 """
-import argparse, html, json, os, re, subprocess, shutil
+import html, json, os, re, subprocess, shutil
 from urllib.parse import quote
 import pandas as pd
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Border, Side
 from openpyxl.utils import get_column_letter
-from common import load, s, sort_key, GRADE_ORDER, short_addr
+from .common import load, s, sort_key, GRADE_ORDER, short_addr
 
 F = 'Arial'
 
@@ -32,10 +31,12 @@ def links_for(x):
     q = x['road'] or x['jibun']
     g = x.get('g')
     zq = q.replace('인천광역시', '인천')
+    kb = x.get('kb')
     return {
         '카카오맵': 'https://map.kakao.com/?q=' + quote(q),
         '카카오 로드뷰': f'https://map.kakao.com/link/roadview/{g[1]},{g[0]}' if g else '',
         '네이버지도': 'https://map.naver.com/p/search/' + quote(q),
+        'KB부동산': 'https://kbland.kr/c/' + str(kb['no']) if kb and kb.get('no') else '',
         '집품': 'https://zippoom.com/search/' + quote(zq) + '?searchWithAddress=false',
         '114On': 'https://www.114.co.kr/search/result/all?query=' + quote(q),
     }
@@ -310,7 +311,7 @@ def card(x, n, mode):
         f1.append(('검수 후보', a(h['link'], f"{h['v']} {h['name']}") + f' <span class="jib">{E(h["reason"])}' + (f' · {h["d"]}m' if h.get('d') is not None else '') + '</span>'))
     if f1: body.append('<div class="f1">' + ''.join(f'<b>{E(k)}</b><div>{v}</div>' for k, v in f1) + '</div>')
     body.append(f'<div class="meta">{"".join(chips)}</div>')
-    ls = [f'<a href="{E(L[k])}" target="_blank" rel="noopener">{k}</a>' if L[k] else f'<a class="off">{k}</a>' for k in ['카카오 로드뷰', '카카오맵', '네이버지도', '집품', '114On']]
+    ls = [f'<a href="{E(L[k])}" target="_blank" rel="noopener">{k}</a>' if L[k] else f'<a class="off">{k}</a>' for k in ['카카오 로드뷰', '카카오맵', '네이버지도', 'KB부동산', '집품', '114On']]
     ls.append(f'<button type="button" data-copy="{E(q)}">주소 복사</button>')
     srch = ' '.join([x['road'], x['jibun'], (x.get('nm') or {}).get('v', ''), x['n0'], str(x['i']), x['grade']] + flags).lower()
     sec = 'h' if x.get('human') else 'r'
@@ -339,50 +340,3 @@ def page(items, title, desc, mode, path):
 <main>{''.join(parts) if items else '<p class="desc">해당하는 건물이 없습니다.</p>'}</main><script>{JS}</script></body></html>"""
     with open(path, 'w', encoding='utf-8') as f: f.write(doc)
     return len(items), len(human), len(rest)
-
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument('--src', required=True); ap.add_argument('--work', default='work')
-    ap.add_argument('--gu', required=True); ap.add_argument('--dong', required=True)
-    ap.add_argument('--out', default='out'); ap.add_argument('--date', required=True)
-    a_ = ap.parse_args()
-    d = os.path.join(a_.work, f'{a_.gu}_{a_.dong}')
-    res = load(os.path.join(d, 'results.json'), [])
-    if not res: raise SystemExit('results.json 이 없음. merge.py 먼저')
-    R = {int(x['i']): x for x in res}
-    df = None
-    for enc in ('utf-8-sig', 'cp949'):
-        try: df = pd.read_csv(a_.src, encoding=enc); break
-        except UnicodeDecodeError: continue
-    df = df[(df['시군구'] == a_.gu) & (df['법정동'] == a_.dong)].reset_index(drop=True)
-    xp, nx = build_xlsx(df, R, a_.gu, a_.dong, a_.out, a_.date)
-    print('엑셀', xp, nx, '행')
-    nmU = lambda x: x['nt'] and not x.get('nm')
-    phU = lambda x: x['pt'] and not x.get('ph')
-    sets = {
-        '사람확인필요': [x for x in res if x.get('human')],
-        '건물명번호_둘다미해결': [x for x in res if nmU(x) and phU(x)],
-        '건물명만미해결': [x for x in res if nmU(x) and not phU(x)],
-        '번호만미해결': [x for x in res if phU(x) and not nmU(x)],
-        '채운정보_전체': [x for x in res if (x['nt'] and x.get('nm')) or (x['pt'] and (x.get('ph') or x.get('st') or x.get('re')))],
-    }
-    base = f'인천 {a_.gu} {a_.dong} 재검색 결과 · {a_.date}. 사람 확인이 필요한 주소를 맨 위에 두고, 두 구역 모두 등급 S, A, B, C, D 순으로 정렬했습니다. 버튼은 도로명주소로 검색하고, 도로명이 없으면 지번으로 검색합니다.'
-    descs = {
-        '사람확인필요': base + ' 건물명 미해결, 대리 연락처도 없는 건물, 건물명 검수 필요, 검수 후보 번호가 있는 건물처럼 로드뷰나 지도를 직접 봐야 하는 주소입니다.',
-        '건물명번호_둘다미해결': base + ' 건물명도 못 찾았고 대표번호도 없는 건물입니다. 대리 연락처가 있어도 대표번호가 아니면 번호 미해결로 봤습니다.',
-        '건물명만미해결': base + ' 건물명은 못 찾았지만 대표번호는 있는 건물입니다.',
-        '번호만미해결': base + ' 건물명은 있지만 대표번호가 없는 건물입니다.',
-        '채운정보_전체': base + ' 건물명, 대표번호, 대리 연락처 중 무엇이든 새로 채운 주소 전부입니다. 제목 줄은 입력한 정보 / 건물명 순서이고, 값마다 출처 링크가 달려 있습니다.',
-    }
-    titles = {'사람확인필요': '사람 확인 필요 목록', '건물명번호_둘다미해결': '건물명·대표번호 둘 다 미해결 목록', '건물명만미해결': '건물명만 미해결 목록', '번호만미해결': '대표번호만 미해결 목록', '채운정보_전체': '채운 정보 전체 목록'}
-    for k, items in sets.items():
-        path = os.path.join(a_.out, f'{a_.gu}_{a_.dong}_{k}_목록_{a_.date}.html')
-        n, h, r_ = page(items, f'{a_.dong} {titles[k]}', descs[k], 'filled' if k == '채운정보_전체' else 'list', path)
-        assert h + r_ == n
-        print(f'HTML {k}: {n}건 · 사람 확인 필요 {h} · 나머지 {r_} → {path}')
-    A, B, C = ({x['i'] for x in sets[k]} for k in ('건물명번호_둘다미해결', '건물명만미해결', '번호만미해결'))
-    union_ok = len(A | B | C) == sum(1 for x in res if nmU(x) or phU(x))
-    print('검증 · 세 미해결 목록 겹침', len(A & B), len(A & C), len(B & C), '· 합집합이 공백 건물 수와 같음' if union_ok else '· 합집합 불일치')
-
-if __name__ == '__main__':
-    main()

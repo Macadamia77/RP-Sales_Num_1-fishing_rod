@@ -13,7 +13,11 @@ pip install -r requirements.txt
 LibreOffice (선택) · 엑셀 수식 재계산용. 없으면 재계산만 건너뜀
 ```
 
-키는 `.env.example`을 `.env`로 복사한 뒤 값을 적는다. `.env`는 `.gitignore`에 들어 있다.
+**Windows에서 `python`이 안 잡힐 때** · 「Python was not found; run without arguments to install from the Microsoft Store」가 나오면 PATH의 `python`이 Microsoft Store 바로가기다. 설치된 파이썬을 전체 경로로 부른다(Anaconda 예: `C:\Users\<사용자>\anaconda3\python.exe run_config.py 확인`). VS Code F5는 VS Code에서 고른 인터프리터를 쓴다. 한글 출력이 깨지면 `PYTHONIOENCODING=utf-8`을 준다.
+
+**결과 폴더 이름 바꾸기** · `조회설정.toml`의 `out`(기본 `results`)을 바꾼다. 예: `out = "결과물"`. 기본값이 아닌 폴더를 쓰면 결과 파일이 git에 올라가지 않도록 `.gitignore`에도 추가한다.
+
+키는 루트에 `.env` 파일을 만들어 아래 이름으로 값을 적는다. `.env`는 `.gitignore`에 들어 있다.
 
 ```
 KAKAO_REST_KEY=
@@ -149,7 +153,6 @@ work/jobs/<작업ID>/                            작업 상태 (지우지 말 �
 run.py, run_config.py      실행 입구
 조회설정.toml              조회 범위 (매번 고침)
 수집설정.toml              조회 규칙 값: 지역어, 사이트 주소, 간격, 오류 한도
-.env.example               키 이름
 pipeline/                  새 코드
   cli.py service.py        명령과 작업 흐름
   selection.py prepare.py  CSV 읽기, 조회 범위, 입력 준비
@@ -160,10 +163,9 @@ pipeline/                  새 코드
   settings.py              수집설정.toml 읽기와 검사
   providers/               카카오, KB부동산, 집품, 네이버, 114On
   secondary.py compat.py   2단계 조회, 자바스크립트와 같은 동작
-  reporting.py csv_export.py 판정 스크립트 호출, CSV 변환
-legacy/                    판정·결과 파일 원본 (merge.py, common.py, build_outputs.py)과 연결용 export_selected.py
-                           common.py는 주안동 예외를 설정으로 옮긴 한 곳만 고침 (original_hashes.json changes)
-tools/check_legacy.py      legacy 파일이 원본과 같은지 확인
+  reporting.py csv_export.py 판정·결과 파일 호출, CSV 변환
+  judge/                   판정과 결과 파일 (merge.py, common.py, build_outputs.py, export_selected.py)
+                           원래 legacy/ 의 원본 판정 코드. 2026-10-08 옮겨 와 함수로 부름 (판정 로직은 그대로)
 tools/replay_check.py      기록한 응답으로 네트워크 없이 다시 돌려 결과 비교
 tests/                     가짜 API로 전체 흐름 시험, 원본 JS와 결과 비교
 docs/                      코드구조_설명서.html(사람용), 코드구조_설명서_AI용.md(AI 도우미용)
@@ -171,7 +173,5 @@ docs/                      코드구조_설명서.html(사람용), 코드구조_
 
 ## 10. 처음 받았을 때 할 일
 
-1. `python tools/check_legacy.py <원본 merge.py 등이 있는 폴더>`
-   legacy 폴더의 세 파일은 프로젝트 문서에서 옮겨 적은 것이다. 일부러 고친 곳(common.py 한 곳)은 반영해서 비교하고, 그 밖에 한 글자라도 다르면 다른 줄을 보여 준다.
-2. `python -m unittest discover -s tests` · 39개 시험이 모두 통과해야 한다. 원본 JS 비교 시험에는 Node.js가 필요하다(없으면 그 시험만 건너뜀).
-3. 작은 동 하나로 `확인` → `조회`를 해 보고, 결과를 기존 결과와 비교한다.
+1. `python -m unittest discover -s tests` · 41개 시험이 모두 통과해야 한다. 원본 JS 비교 시험에는 Node.js가 필요하다(없으면 그 시험만 건너뜀).
+2. 작은 동 하나로 `확인` → `조회`를 해 보고, 결과를 기존 결과와 비교한다.

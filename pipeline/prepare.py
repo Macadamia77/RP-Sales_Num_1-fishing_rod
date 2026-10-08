@@ -5,16 +5,12 @@
   둘 중 하나라도 해당하면 조회 대상. 둘 다 해당하면 이름과 번호를 모두 찾는다
 
 (시군구, 법정동)별로 묶어 작업 폴더에 input.json(판정기 입력)과 source.csv(선택된 원본 행)를 쓴다.
-주소 정리 규칙은 legacy/common.py 를 그대로 쓴다.
+주소 정리 규칙은 judge/common.py 를 그대로 쓴다.
 """
 import os
-import sys
 
-from .storage import LEGACY_DIR, write_json
-
-if LEGACY_DIR not in sys.path:
-    sys.path.insert(0, LEGACY_DIR)
-from common import jibun_from_src, road_from_src, s, short_addr  # noqa: E402  (legacy/common.py)
+from .judge.common import jibun_from_src, road_from_src, s, short_addr
+from .storage import write_json
 
 
 def flags(df):

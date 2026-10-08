@@ -52,8 +52,8 @@ DEFAULTS = {
     },
 }
 
-# 판정 규칙(legacy/common.py 등)이 인천 주소 형식을 기준으로 짜여 있어, 지금은 인천만 받는다.
-# 다른 시도를 넣으려면 legacy 판정 규칙의 주소 정리 부분도 함께 고쳐야 한다 (검수보고서 1-13)
+# 판정 규칙(judge/common.py 등)이 인천 주소 형식을 기준으로 짜여 있어, 지금은 인천만 받는다.
+# 다른 시도를 넣으려면 판정 규칙의 주소 정리 부분도 함께 고쳐야 한다 (검수보고서 1-13)
 SUPPORTED_SIDO = {'인천광역시': '인천'}
 
 
@@ -82,9 +82,6 @@ class Settings:
         """주소 앞의 「인천광역시 ○○구 」 또는 「인천 ○○구 」 부분 (원본 JS 의 /^인천(광역시)?\\s*[가-힣]+(구|군)\\s*/ 와 같음)"""
         rest = self.sido[len(self.sido_short):]
         return re.escape(self.sido_short) + '(' + re.escape(rest) + ')?'
-
-    def extra_words_json(self):
-        return json.dumps(self.extra_words, ensure_ascii=False)
 
 
 def _is_num(v):
