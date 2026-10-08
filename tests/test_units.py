@@ -18,7 +18,7 @@ sys.path.insert(0, HERE)
 
 import fakeapi  # noqa: E402
 import sample  # noqa: E402
-from pipeline import credentials, reporting, settings, stages, storage  # noqa: E402
+from pipeline import credentials, settings, stages, storage  # noqa: E402
 from pipeline.errors import (AuthError, BlockedError, MissingCredential, RateLimitError, RequestError, RetryableError,  # noqa: E402
                              StageStopped, UnexpectedResponse, UsageError)
 from pipeline.providers.kakao import Kakao  # noqa: E402
@@ -333,25 +333,15 @@ class SettingsTest(TmpCase):
         self.assertEqual(headers()['Origin'], 'https://m.114.co.kr')
         self.assertEqual(settings.current().max_errors, 5)
 
-    def test_extra_words_reach_legacy_judge(self):
-        """판정 코드(legacy/common.py)는 별도 프로세스라 환경변수로 받는다. 설정이 없으면 원래 값(주안동 → 관교)"""
-        import importlib.util
-        spec = importlib.util.spec_from_file_location('legacy_common', os.path.join(ROOT, 'legacy', 'common.py'))
-        common = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(common)
-        old = os.environ.pop('COLLECTOR_REGION_EXTRA', None)
-        try:
-            self.assertIn('관교', common.region_words('미추홀구', '주안동'))
-            self.assertNotIn('관교', common.region_words('미추홀구', '학익동'))
-            settings.use(settings.load(self.write('[region.extra_words]\n"미추홀구 학익동" = ["인하"]\n')))
-            os.environ['COLLECTOR_REGION_EXTRA'] = reporting._env()['COLLECTOR_REGION_EXTRA']
-            self.assertIn('인하', common.region_words('미추홀구', '학익동'))
-            self.assertNotIn('인하', common.region_words('연수구', '학익동'))
-            self.assertNotIn('관교', common.region_words('미추홀구', '주안동'))
-        finally:
-            os.environ.pop('COLLECTOR_REGION_EXTRA', None)
-            if old is not None:
-                os.environ['COLLECTOR_REGION_EXTRA'] = old
+    def test_extra_words_reach_judge(self):
+        """판정 코드(judge/common.py)는 수집설정.toml 의 지역어를 바로 읽는다. 설정이 없으면 원래 값(주안동 → 관교)"""
+        from pipeline.judge import common
+        self.assertIn('관교', common.region_words('미추홀구', '주안동'))
+        self.assertNotIn('관교', common.region_words('미추홀구', '학익동'))
+        settings.use(settings.load(self.write('[region.extra_words]\n"미추홀구 학익동" = ["인하"]\n')))
+        self.assertIn('인하', common.region_words('미추홀구', '학익동'))
+        self.assertNotIn('인하', common.region_words('연수구', '학익동'))
+        self.assertNotIn('관교', common.region_words('미추홀구', '주안동'))
 
 
 if __name__ == '__main__':

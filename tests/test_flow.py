@@ -41,6 +41,17 @@ class FlowTest(TmpCase):
         kw.setdefault('filter_sets', [FilterSet(gu=['미추홀구'])])
         return service.run_core([self.src], work=self.work, out=self.out, transport=t or fakeapi.FakeTransport(), date='2026-10-01', log=QUIET, **kw)
 
+    def test_relative_work_and_out(self):
+        # 판정이 legacy/ 폴더의 별도 프로세스였을 때 상대 경로를 그대로 넘겨 merge.py 가 input.json 을 못 찾았음 (2026-10-08)
+        old = os.getcwd()
+        os.chdir(self.tmp)
+        try:
+            service.run_core([self.src], [FilterSet(gu=['미추홀구'])], work='work', out='results',
+                             transport=fakeapi.FakeTransport(), date='2026-10-01', log=QUIET)
+        finally:
+            os.chdir(old)
+        self.assertTrue(glob.glob(os.path.join(self.tmp, 'results', '*', 'core', '*', '미추홀구_관교동', '*.xlsx')))
+
     def test_full_run_outputs(self):
         r = self.core()
         d = r['dir']

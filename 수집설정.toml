@@ -3,7 +3,7 @@
 # 한글 키는 따옴표로 감싼다: "주안동" = ["관교"]
 
 [region]
-# 지금은 인천광역시만 가능. 판정 규칙(legacy/common.py 등)이 인천 주소 형식 기준이라서
+# 지금은 인천광역시만 가능. 판정 규칙(pipeline/judge/common.py 등)이 인천 주소 형식 기준이라서
 sido = "인천광역시"
 
 [region.extra_words]

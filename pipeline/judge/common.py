@@ -3,6 +3,8 @@
 # 규칙을 바꿀 때는 이 파일만 고치고, 인수인계 문서도 함께 고칠 것
 import json, math, os, re
 
+from ..settings import current as settings
+
 SIDO = '인천광역시'
 GRADE_ORDER = {'S': 0, 'A': 1, 'B': 2, 'C': 3, 'D': 4}
 
@@ -97,12 +99,9 @@ def name_eq(a, b):
 LOOSE_DROP = r'\s+|아파트|오피스텔|빌라|주택|\(.*?\)|인천|주상복합|\d+차|\d+단지'
 
 # 동별로 더하는 지역어. 원래는 region_words 안에 「주안동이면 관교」로 적혀 있던 것
-# 새 코드(pipeline)가 수집설정.toml [region.extra_words] 를 환경변수 COLLECTOR_REGION_EXTRA 로 넘긴다. 없으면 원래 값
-REGION_EXTRA_DEFAULT = {'주안동': ['관교']}
-
+# 수집설정.toml [region.extra_words] 에서 읽는다. 항목이 없으면 기본값(주안동 → 관교)
 def _extra_words(gu, dong):
-    extra = json.loads(os.environ.get('COLLECTOR_REGION_EXTRA') or 'null')
-    if extra is None: extra = REGION_EXTRA_DEFAULT
+    extra = settings().extra_words
     return extra.get(f'{s(gu)} {s(dong)}', []) + extra.get(s(dong), [])
 
 def region_words(gu, dong):

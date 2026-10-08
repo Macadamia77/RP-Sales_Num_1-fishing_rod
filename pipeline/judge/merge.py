@@ -2,11 +2,11 @@
 
 언제든 다시 돌려도 됨. 있는 결과만으로 판정하고, 부족한 단계는 대기열 파일로 알려 줌
 
-사용 예
-  python merge.py --work work --gu 미추홀구 --dong 주안동
-  python merge.py --work work --gu 미추홀구 --dong 주안동 --scope114 no_proxy
+사용 예 (pipeline/reporting.py 가 부름)
+  run(work, '미추홀구', '주안동')
+  run(work, '미추홀구', '주안동', 'no_proxy')
 
---scope114
+scope114
   no_rep    대표번호가 없는 건물 전부를 114On 대기열에 넣음. 용현동·주안동 방식. 기본값
   no_proxy  대표번호도 대리 연락처도 없는 건물만
   none      114On 대기열을 만들지 않음
@@ -19,7 +19,7 @@
 """
 import argparse, json, os, re
 from urllib.parse import quote
-from common import (load, save, s, nr, nj, short_addr, dist_m, is_mg, strip_mg, name_eq, loose_eq, exact_core_eq,
+from .common import (load, save, s, nr, nj, short_addr, dist_m, is_mg, strip_mg, name_eq, loose_eq, exact_core_eq,
                     region_words, is_bldg_place, REP_EXCL, OTHER_FACILITY_MG, clean_kb, bad_name, suspicious_name,
                     EXCL, role, digits, facility)
 
@@ -160,11 +160,10 @@ def write_js(d, prefix, fn, reg, rows, chunk):
         out.append((name, len(part), idsum))
     return out
 
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument('--work', default='work'); ap.add_argument('--gu', required=True); ap.add_argument('--dong', required=True)
-    ap.add_argument('--scope114', default='no_rep', choices=['no_rep', 'no_proxy', 'none'])
-    a = ap.parse_args()
+def run(work, gu, dong, scope114='no_rep'):
+    """<work>/<구>_<동>/ 의 조회 결과로 판정. 요약은 print 로 남김"""
+    if scope114 not in ('no_rep', 'no_proxy', 'none'): raise ValueError(f'scope114 · {scope114}')
+    a = argparse.Namespace(work=work, gu=gu, dong=dong, scope114=scope114)
     d = os.path.join(a.work, f'{a.gu}_{a.dong}')
     IN = load(os.path.join(d, 'input.json'), [])
     if not IN: raise SystemExit('input.json 이 없음. prepare.py 먼저')
@@ -260,6 +259,3 @@ def main():
     for label, w in (('네이버 지오코딩 대기열', w1), ('네이버 확인 대기열', w2), ('114On 대기열', w3)):
         tot = sum(z[1] for z in w)
         print(f'  {label} {tot}건' + ('' if not w else ' · ' + ', '.join(f'{z[0]} {z[1]}건' + (f' idx합 {z[2]}' if z[2] is not None else '') for z in w)))
-
-if __name__ == '__main__':
-    main()

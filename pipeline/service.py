@@ -52,7 +52,7 @@ class JobPaths:
         self.traces = os.path.join(self.dir, 'traces')
 
     def merge_log(self):
-        return os.path.join(self.logs, 'legacy.log')
+        return os.path.join(self.logs, 'judge.log')
 
 
 def resolve_job(work, job):

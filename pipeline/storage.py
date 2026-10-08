@@ -1,7 +1,7 @@
 """작업 저장소 · SQLite, 잠금, 코드 해시
 
 한 건 조회할 때마다 SQLite에 바로 저장한다 (전원이 꺼져도 그 건까지는 남음).
-단계가 끝나면 판정기(legacy/merge.py)가 읽는 JSON 파일(A.json 등)을 만든다.
+단계가 끝나면 판정기(judge/merge.py)가 읽는 JSON 파일(A.json 등)을 만든다.
 """
 import datetime
 import hashlib
@@ -13,8 +13,6 @@ import threading
 from .errors import JobLocked
 
 PIPE_DIR = os.path.dirname(os.path.abspath(__file__))
-ROOT_DIR = os.path.dirname(PIPE_DIR)
-LEGACY_DIR = os.path.join(ROOT_DIR, 'legacy')
 
 
 def now_iso():
@@ -22,7 +20,7 @@ def now_iso():
 
 
 def code_hash():
-    """pipeline/ 안의 .py 파일(하위 폴더 포함)을 해시. 루트 파일과 legacy/는 포함하지 않음"""
+    """pipeline/ 안의 .py 파일(하위 폴더 포함, 판정 코드 judge/ 도 포함)을 해시. 루트 파일은 포함하지 않음"""
     h = hashlib.sha256()
     files = []
     for root, dirs, fs in os.walk(PIPE_DIR):

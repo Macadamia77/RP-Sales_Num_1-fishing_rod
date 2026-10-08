@@ -45,7 +45,7 @@ def core(s):
 
 
 def is_mg(n):
-    """collector.js 의 isMg. legacy/common.py 의 is_mg 보다 목록이 짧음(관리사무실·전기차 제외 없음) · 원본 그대로 둠"""
+    """collector.js 의 isMg. judge/common.py 의 is_mg 보다 목록이 짧음(관리사무실·전기차 제외 없음) · 원본 그대로 둠"""
     return bool(re.search(r'관리사무소|관리실|관리단|관리소|관리센터|입주자대표회의', js_str(n)))
 
 

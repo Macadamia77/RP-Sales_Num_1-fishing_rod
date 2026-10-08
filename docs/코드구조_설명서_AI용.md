@@ -2,6 +2,7 @@
 
 > 대상: 이 코드를 고치거나 ERS에 이식할 개발자의 AI 도우미.
 > 기준: 2026-09-30판. 파이썬 파일 약 3,400줄, 시험 39개.
+> 2026-10-08 갱신: `legacy/` 판정 코드를 `pipeline/judge/`로 옮겨 별도 프로세스 대신 함수로 부르게 바꿨다(판정 로직은 그대로, 용현동 926건 결과가 전과 글자 단위로 같음). 원본 대조 도구(`tools/check_legacy.py`, `original_hashes.json`)와 `.env.example`은 삭제. 시험 41개. 아래 줄 수는 옛 기준이다.
 > 사람이 읽는 설명서는 `코드구조_설명서.html`, 검수 결과와 위험 목록은 `검수보고서.md`에 있다.
 
 ## 0. 요약 (먼저 읽을 것)
@@ -9,7 +10,7 @@
 - **하는 일**
   - 인천 콜리스트 CSV에서 조회 대상 건물을 고른다. 대상은 건물명이 `(건물명없음)`이거나 대표번호가 비어 있거나 `없음`인 건물이다.
   - 카카오 → KB부동산·집품 → 네이버(선택으로 114On)를 조회해 건물명과 관리사무소 번호 후보를 모은다.
-  - legacy 판정 코드로 확정값을 정한다.
+  - 판정 코드(`pipeline/judge/`)로 확정값을 정한다.
   - 엑셀·CSV(77열)·HTML 5종·summary.json을 만든다.
 - **입구는 2개이고, 둘 다 같은 총괄 함수를 부른다.**
   - `run_config.py`: 설정 파일로 실행한다. VS Code F5가 이것을 쓴다.
@@ -21,7 +22,7 @@
   - `status`: 진행 상황
   - 작업(job) 단위로 상태를 관리한다.
 - **층 구조**: 입구 → service(흐름) → stages(단계 실행 규칙) → providers(사이트별 조회) → transport(HTTP·오류 분류).
-  - 판정과 결과 파일은 `reporting.py`가 legacy 스크립트를 별도 프로세스로 실행해 만든다.
+  - 판정과 결과 파일은 `reporting.py`가 `judge/merge.py`·`judge/export_selected.py`의 `run()`을 불러 만든다.
 - **설정은 두 파일이다.**
   - `조회설정.toml`: 조회 범위. 매번 고친다.
   - `수집설정.toml`: 지역어, 사이트 주소, 간격, 오류 한도. 평소에는 고치지 않는다.
@@ -74,18 +75,18 @@
 
 | 파일 | 줄 | 책임 | 주요 이름 |
 |---|---|---|---|
-| `pipeline/reporting.py` | 47 | legacy 스크립트를 별도 프로세스로 실행한다. 키 환경변수는 빼고 지역어 환경변수는 넣는다. 로그는 `logs/legacy.log` | `merge`, `export_group` |
+| `pipeline/reporting.py` | 44 | 판정(`judge.merge.run`)과 결과 파일(`judge.export_selected.run`)을 부른다. print 출력은 `logs/judge.log`에 모으고 실패하면 마지막 줄을 오류에 담는다 | `merge`, `export_group` |
 | `pipeline/csv_export.py` | 39 | 엑셀 결과 시트 → CSV. 하이퍼링크는 옆 `_링크` 열로 옮긴다 | `xlsx_to_csv` |
 | `pipeline/replay.py` | 33 | 기록한 응답으로 다시 돌려 결과 비교 | `replay_core`, `compare_results` |
 
-### 1-6. legacy (원본 판정 코드)
+### 1-6. judge (판정 코드 · 원래 legacy/)
 
 | 파일 | 줄 | 책임 | 비고 |
 |---|---|---|---|
-| `legacy/merge.py` | 265 | 판정. A·B·NG·NV·C.json → results.json과 다음 단계 대기열(`naver_geo_*.js`, `naver_verify_*.js`, `q114_*.js`) | 원본 그대로 |
-| `legacy/common.py` | 208 | 주소 정리, 이름 비교, 관리사무소 판정, 지역어 | 한 곳만 고침: 주안동 예외 → `COLLECTOR_REGION_EXTRA` |
-| `legacy/build_outputs.py` | 388 | 엑셀·HTML 생성 함수 | 원본 그대로 |
-| `legacy/export_selected.py` | 120 | 새로 만든 어댑터. 선택한 행만 엑셀과 HTML 5종으로 만든다. 수식 차단, LibreOffice 재계산 | 원본 아님 |
+| `pipeline/judge/merge.py` | 261 | 판정. A·B·NG·NV·C.json → results.json과 다음 단계 대기열(`naver_geo_*.js`, `naver_verify_*.js`, `q114_*.js`). 입구 `run(work, gu, dong, scope114)` | 원본 로직 그대로. 명령줄 `main` → `run` |
+| `pipeline/judge/common.py` | 207 | 주소 정리, 이름 비교, 관리사무소 판정, 지역어 | 주안동 예외 → `settings().extra_words`(수집설정.toml) |
+| `pipeline/judge/build_outputs.py` | 342 | 엑셀·HTML 생성 함수 | 원본 그대로. 단독 실행용 `main` 삭제, HTML 카드에 KB부동산 버튼(2026-10-08) |
+| `pipeline/judge/export_selected.py` | 112 | 선택한 행만 엑셀과 HTML 5종으로 만든다. 수식 차단, LibreOffice 재계산. 입구 `run(work, gu, dong, out, date)` | 원본 아님 |
 
 ### 1-7. 설정·도구·시험
 
@@ -93,9 +94,7 @@
 |---|---|
 | `조회설정.toml` | 조회 범위. `src`, `[["조회"]]` 블록(`"구"`, `"동"`, `"등급"`, `id`), workers, skip_geo, run_tag, scope114 |
 | `수집설정.toml` | `[region]` sido·extra_words, `[urls]`, `[timing]`, `[limits]` |
-| `.env.example` | 키 이름 5개 (KAKAO_REST_KEY, NCP_GEO_ID, NCP_GEO_SECRET, NCP_HUB_ID, NCP_HUB_SECRET) |
-| `original_hashes.json` | legacy 원본 SHA-256과 일부러 고친 곳(`changes`) |
-| `tools/check_legacy.py` | legacy가 원본(+기록된 수정)과 같은지 확인 |
+| `.env` | 키 5개 (KAKAO_REST_KEY, NCP_GEO_ID, NCP_GEO_SECRET, NCP_HUB_ID, NCP_HUB_SECRET). git에 올리지 않음 |
 | `tools/replay_check.py` | 기록 재생으로 결과 비교 |
 | `tests/fakeapi.py`, `tests/sample.py` | 가짜 API 응답과 시험용 CSV |
 | `tests/test_units.py` | 단위 시험 (선택, 오류 분류, 키, 저장소, 114 규칙, 설정) |
@@ -148,12 +147,11 @@ API를 부르지 않는다. 저장된 조회 결과로 merge와 결과 파일만
 4. **Store에는 건마다 바로 쓴다.** 행 = (stage, grp, key, ok, value, updated). ok=0 행은 다음 실행에서 다시 조회한다.
 5. **키는 파일에 쓰지 않는다.**
    - 로그·오류·traces는 `mask`로 가린다.
-   - legacy 자식 프로세스에는 키 환경변수를 넘기지 않는다.
    - 결과 폴더는 마지막에 `scan`으로 검사한다.
 6. **원본 CSV는 읽기만 한다.** 결과는 항상 새 실행시각 폴더에 쓴다(이전 결과를 덮어쓰지 않음).
 7. **작업 ID는 `pipeline/**/*.py`의 코드 해시를 포함한다.**
-   - pipeline 코드를 고치면 새 작업이 되어 처음부터 다시 조회하고, 이전 작업에는 114를 붙일 수 없다.
-   - legacy와 수집설정.toml은 작업 ID에 들어가지 않는다. 이미 받은 조회 결과를 틀리게 만들지 않기 때문이다. 대신 `summary.json.settings`(파일, sha, extra_words)에 남는다.
+   - pipeline 코드(판정 코드 `judge/` 포함, 2026-10-08부터)를 고치면 새 작업이 되어 처음부터 다시 조회하고, 이전 작업에는 114를 붙일 수 없다. 이미 받은 작업은 `export`로 판정만 다시 돌릴 수 있다(`export`는 코드 해시를 검사하지 않음).
+   - 수집설정.toml은 작업 ID에 들어가지 않는다. 대신 `summary.json.settings`(파일, sha, extra_words)에 남는다.
 8. **조회 모듈은 원본 JS와 같은 요청·같은 결과를 내야 한다.** 시험 `test_same_as_original_js`가 원본 JS를 Node에서 가짜 API로 돌려 요청 목록과 결과를 비교한다. JS와 다른 파이썬 기본 동작(공백, 반올림, 인코딩, 키 순서)은 `compat.py`를 거친다.
 9. **엑셀은 수식을 차단한다.** 지표 시트를 뺀 모든 시트에서 `=`로 시작하는 값을 글자로 바꾼다. CSV는 ERS가 원래 글자를 그대로 가져가야 하므로 바꾸지 않는다.
 
@@ -163,7 +161,7 @@ API를 부르지 않는다. 저장된 조회 결과로 merge와 결과 파일만
   - `job.json`: params, groups, core·c114의 complete, exports, errors_remaining, code_hash
   - `state.sqlite3`
   - `data/`, `data114/`
-  - `logs/legacy.log`, `traces/`(선택)
+  - `logs/judge.log`, `traces/`(선택)
 - **판정기 입력** `input.json`: 행 = `{i, gu, dong, road, jibun, n0, nt, pt, grade, hh, ho}`
   - 조회 모듈에 넘기는 줄인 형태는 `[i, 짧은 도로명, 짧은 지번, n0, nt, pt]`이다.
 - **대기열 파일**: `__loadXxx({...},[[...],...])` 형태의 JS. `service.read_queue`가 `'},['` 뒤를 JSON으로 읽는다. 형식이 다르면 PipelineError.
@@ -183,18 +181,18 @@ API를 부르지 않는다. 저장된 조회 결과로 merge와 결과 파일만
 | 요청 간격, 멈춤 기준 조정 | `수집설정.toml [timing]`, `[limits]` | 원래 값보다 줄이면 실행 시 주의가 뜸 |
 | 특정 동의 지역어 추가 | `수집설정.toml [region.extra_words]` (`"동"` 또는 `"구 동"`) | 기존 작업은 `run.py export`로 판정만 다시 |
 | 사이트 응답 구조가 바뀜 | `pipeline/providers/<사이트>.py` | 시험의 가짜 응답(`tests/fakeapi.py`)도 수정. 코드 해시가 바뀌어 새 작업이 됨 |
-| 판정 규칙 변경 | `legacy/common.py` 또는 `merge.py` | `original_hashes.json`의 `changes`에 고친 내용 기록, `tools/check_legacy.py` 확인 |
-| 결과 열 추가(예: 출처 코드, 거리) | `legacy/build_outputs.py`, `pipeline/csv_export.py` | CSV 77열을 확인하는 시험(`test_full_run_outputs`) 수정 |
-| 다른 시도 지원 | legacy 주소 규칙(common.py `GU_RE`, `LOOSE_DROP`, `replace('인천광역시','인천')` 등) → `settings.SUPPORTED_SIDO`에 추가 | 지금은 인천광역시만 허용 |
+| 판정 규칙 변경 | `pipeline/judge/common.py` 또는 `merge.py` | 코드 해시가 바뀜. 기존 작업에 `export`로 판정을 다시 돌려 전후 `results.json`을 비교 |
+| 결과 열 추가(예: 출처 코드, 거리) | `pipeline/judge/build_outputs.py`, `pipeline/csv_export.py` | CSV 77열을 확인하는 시험(`test_full_run_outputs`) 수정 |
+| 다른 시도 지원 | 판정 주소 규칙(judge/common.py `GU_RE`, `LOOSE_DROP`, `replace('인천광역시','인천')` 등) → `settings.SUPPORTED_SIDO`에 추가 | 지금은 인천광역시만 허용 |
 | 새 사이트 추가 | `providers/` 새 파일 + `service`에 단계 추가 + merge.py가 읽을 JSON | `run_stage` 규칙(건너뛰기, 멈춤)을 그대로 씀 |
 
 ## 6. 알려진 한계
 
 자세한 내용은 `검수보고서.md`에 있다.
 
-- 실제 API로는 돌려 보지 않았다. 가짜 API와 원본 JS 비교로만 확인했다.
+- 2026-10-07 미추홀구 용현동 926건을 실제 API로 돌렸다(오류 0). 그 밖에는 가짜 API와 원본 JS 비교로 확인했다.
 - 114On을 파이썬에서 직접 부르는 방식은 확인하지 않았다. 원본은 브라우저 화면 안에서 호출했다.
-- legacy 3개 파일은 프로젝트 문서에서 옮겨 적은 것이다. 실제로 쓰던 파일과 `check_legacy.py`로 비교해야 한다.
+- 판정 코드는 프로젝트 문서의 2026-09-28판을 옮겨 적은 것이다(원래 legacy/). 원본 대조 도구는 2026-10-08 이식 때 삭제했고, 옛 파일은 git 기록에 있다.
 - 집품 조회 도메인(`live.zippo-om.com`)과 링크 도메인(`zippoom.com`)이 다르다. 어느 쪽이 맞는지 확인이 필요하다.
 - 호출 제한은 작업 하나 안에서만 지킨다. 작업 여러 개를 동시에 돌리면 같은 키로 호출이 겹친다.
 - 상태를 SQLite 파일에 저장한다. 서버 한 대의 고정 디스크에서 돌려야 한다. Lambda처럼 매번 새로 뜨는 환경이나 여러 대가 함께 쓰는 네트워크 디스크는 맞지 않는다.
