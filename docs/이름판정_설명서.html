@@ -1,0 +1,331 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>건물명·이름 비교 설명서</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap"><style>
+:root{--paper:#f5f7f9;--card:#fff;--ink:#1b2530;--ink2:#4a5866;--ink3:#71808e;--line:#d8e0e7;--soft:#eaf0f4;--accent:#1c6b86;--accent-soft:#e1eff4;
+--ok:#2e7d50;--ok-soft:#e3f2e8;--warn:#9a6a12;--warn-soft:#f8efd9;--bad:#a23b3b;--bad-soft:#f6e3e3;--vio:#5b3fa0;--vio-soft:#eee8fa;--code:#eef2f5;
+--f-head:"IBM Plex Sans KR","Noto Sans KR","Malgun Gothic",sans-serif;--f-body:"Noto Sans KR","Malgun Gothic","Apple SD Gothic Neo",sans-serif;--f-mono:"JetBrains Mono",Consolas,monospace}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--paper:#11171d;--card:#18212a;--ink:#e3e9ee;--ink2:#b3bfca;--ink3:#8795a2;--line:#2b3844;--soft:#1f2a34;--accent:#6cc0dc;--accent-soft:#16323d;--ok:#74c795;--ok-soft:#173226;--warn:#e2b45c;--warn-soft:#3a2d12;--bad:#e58a8a;--bad-soft:#3a1c1c;--vio:#b9a4ef;--vio-soft:#2a2240;--code:#1f2a34}}
+:root[data-theme="dark"]{color-scheme:dark;--paper:#11171d;--card:#18212a;--ink:#e3e9ee;--ink2:#b3bfca;--ink3:#8795a2;--line:#2b3844;--soft:#1f2a34;--accent:#6cc0dc;--accent-soft:#16323d;--ok:#74c795;--ok-soft:#173226;--warn:#e2b45c;--warn-soft:#3a2d12;--bad:#e58a8a;--bad-soft:#3a1c1c;--vio:#b9a4ef;--vio-soft:#2a2240;--code:#1f2a34}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.7;padding:24px 16px 64px}
+.wrap{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:210px minmax(0,1fr);gap:36px}
+@media (max-width:900px){.wrap{grid-template-columns:minmax(0,1fr)}.toc{display:none}}
+.toc{position:sticky;top:16px;align-self:start;font-size:13px}
+.toc b{display:block;font-family:var(--f-head);font-size:12px;color:var(--ink3);margin-bottom:8px}
+.toc a{display:block;color:var(--ink2);text-decoration:none;padding:3px 0 3px 10px;border-left:2px solid var(--line)}
+.toc a:hover{color:var(--accent);border-left-color:var(--accent)}
+main{min-width:0}
+header.top{padding-bottom:18px;border-bottom:1px solid var(--line);margin-bottom:24px}
+.eyebrow{font-family:var(--f-head);font-size:12px;letter-spacing:.06em;color:var(--accent);font-weight:600}
+h1{font-family:var(--f-head);font-size:28px;line-height:1.3;margin:6px 0 10px}
+.meta{color:var(--ink3);font-size:13px}
+h2{font-family:var(--f-head);font-size:21px;margin:44px 0 12px;scroll-margin-top:16px}
+h3{font-family:var(--f-head);font-size:16.5px;margin:26px 0 8px}
+p{margin:6px 0 10px;max-width:78ch}
+ul,ol{margin:6px 0 12px;padding-left:22px;max-width:80ch}li{margin:3px 0}
+code{font-family:var(--f-mono);font-size:12.5px;background:var(--code);padding:1px 5px;border-radius:4px;word-break:break-all}
+.summary{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 22px}
+.summary h2{margin:0 0 8px;font-size:18px}
+.tbl{overflow-x:auto;margin:8px 0 16px;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{padding:8px 11px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-family:var(--f-head);font-weight:600;background:var(--soft);font-size:12.5px;color:var(--ink2);white-space:nowrap}
+tr:last-child td{border-bottom:none}
+td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+td.nw{white-space:nowrap}
+.chip{display:inline-block;font-size:12px;font-weight:600;padding:1px 9px;border-radius:999px;white-space:nowrap;font-family:var(--f-head)}
+.c-new{background:var(--accent-soft);color:var(--accent)}.c-ok{background:var(--ok-soft);color:var(--ok)}.c-warn{background:var(--warn-soft);color:var(--warn)}.c-bad{background:var(--bad-soft);color:var(--bad)}.c-vio{background:var(--vio-soft);color:var(--vio)}.c-mute{background:var(--soft);color:var(--ink2)}
+.box{border-radius:10px;padding:12px 16px;margin:10px 0 14px;border:1px solid var(--line);background:var(--card)}
+.box.warn{background:var(--warn-soft);border-color:transparent}.box.new{background:var(--accent-soft);border-color:transparent}
+.box b.h{font-family:var(--f-head);display:block;margin-bottom:4px}
+pre{font-family:var(--f-mono);font-size:12.5px;background:var(--code);padding:10px 12px;border-radius:8px;overflow-x:auto;white-space:pre-wrap;word-break:break-all;margin:6px 0}
+.prio{display:grid;grid-template-columns:130px minmax(0,1fr);gap:0 16px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin:8px 0}
+.prio .pl{border-right:1px solid var(--line);padding-right:12px}.prio .pn{font-family:var(--f-head);font-size:22px;font-weight:700;color:var(--accent);line-height:1.1}
+.prio .pa{font-size:13px;font-weight:600;margin-top:4px}.prio .pc{font-size:12px;color:var(--ink3);margin-top:6px}
+.prio .pb p{margin:2px 0 6px}
+@media (max-width:700px){.prio{grid-template-columns:minmax(0,1fr)}.prio .pl{border-right:0;border-bottom:1px solid var(--line);padding:0 0 8px;margin-bottom:8px}}
+.steps{counter-reset:st;list-style:none;padding:0;margin:8px 0 14px;max-width:none}
+.steps li{counter-increment:st;position:relative;padding:8px 12px 8px 44px;background:var(--card);border:1px solid var(--line);border-radius:9px;margin:6px 0}
+.steps li::before{content:counter(st);position:absolute;left:12px;top:8px;width:22px;height:22px;border-radius:50%;background:var(--accent);color:var(--card);font-family:var(--f-head);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.flow{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:8px 0 12px;font-size:13px}
+.flow span{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:3px 9px;font-family:var(--f-mono);font-size:12.5px}
+.flow i{color:var(--ink3);font-style:normal}
+.flow span.drop{text-decoration:line-through;color:var(--bad);background:var(--bad-soft);border-color:transparent}
+.flow span.end{background:var(--accent-soft);color:var(--accent);border-color:transparent;font-weight:600}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:10px 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.card h4{font-family:var(--f-head);margin:0 0 6px;font-size:15px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:10px 0 16px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+.stat .v{font-family:var(--f-head);font-size:22px;font-weight:700;font-variant-numeric:tabular-nums}
+.stat .l{font-size:12.5px;color:var(--ink3)}
+.src{font-size:12.5px;color:var(--ink3)}
+</style></head><body>
+<div class="wrap">
+<nav class="toc"><b>목차</b>
+<a href="#sum">요약</a>
+<a href="#terms">0. 용어</a>
+<a href="#name">1. 건물명 정하기</a>
+<a href="#filter">2. 쓸 수 없는 이름 거르기</a>
+<a href="#same">3. 같은 주소, 다른 이름</a>
+<a href="#phone">4. 대표번호 순위</a>
+<a href="#cmp">5. 이름 비교 3종</a>
+<a href="#region">6. 지역어</a>
+<a href="#why">7. 왜 loose_eq만 지역어를 지우나</a>
+<a href="#real">8. 실제 사례 10쌍</a>
+<a href="#walk">9. 건물 하나 따라가기</a>
+<a href="#watch">10. 알아 둘 점</a>
+<a href="#code">11. 코드 위치</a>
+</nav>
+<main>
+<header class="top">
+<div class="eyebrow">판정 코드 pipeline/judge/ · 건물명과 대표번호를 정할 때의 이름 처리</div>
+<h1>건물명·이름 비교 설명서</h1>
+<div class="meta">2026-10-09 작성 · 기준 코드 main <code>700128d</code> · 실제 숫자는 인천 10개 구·군 전체 조회(작업 <code>8781ba345da7daea56c29ac3</code>, 19,927건) 결과 <code>결과물/8781ba34…/core/20261009-173653/</code>에서 셈</div>
+</header>
+
+<section class="summary" id="sum">
+<h2>요약</h2>
+<ul>
+<li><b>건물명</b>은 이름끼리 비교하지 않는다. 카카오 주소검색 → 같은 주소의 카카오 건물 장소 → 집품 → KB 순으로 <b>처음 나온 쓸 만한 값</b>을 쓴다.</li>
+<li>집품·KB는 이름이 없는 건물에도 <code>주안동 954-38</code>, <code>다세대(68-3)</code> 같은 값을 채워 준다. 이런 값은 건물명이 아니므로 버린다.</li>
+<li><b>이름 비교</b>는 대표번호를 정할 때만 쓴다. 비교는 세 가지(<code>loose_eq</code>, <code>name_eq</code>, <code>exact_core_eq</code>)이고, 기준이 서로 다르다.</li>
+<li><b>지역어</b>(주안, 미추홀, 관교 …)는 셋 중 가장 느슨한 <code>loose_eq</code>에서만 지운다. 두 글자만 겹쳐도 같다고 보는 규칙이라, 동네 이름 하나로 다른 건물이 같은 건물로 판정되기 때문이다.</li>
+<li><code>name_eq</code>에도 지역어를 지우면 오히려 손해다. 실제 데이터에서 "효성빌라", "계산빌라"처럼 동네 이름이 곧 건물명인 빌라를 놓친다.</li>
+</ul>
+</section>
+
+<h2 id="terms">0. 용어</h2>
+<p>아래 용어는 서로 다른 것이다. 섞어 쓰지 않는다.</p>
+<div class="tbl"><table>
+<tr><th>용어</th><th>뜻</th><th>만드는 곳</th></tr>
+<tr><td class="nw"><b>주소검색</b> <code>address.json</code></td><td>카카오에 주소를 넣으면 그 주소의 정식 도로명·지번과 <b>건물명</b>(있으면)을 준다</td><td class="nw">1단계 A</td></tr>
+<tr><td class="nw"><b>키워드검색</b> <code>keyword.json</code></td><td>카카오에 검색어를 넣으면 <b>장소</b>(업소·건물) 목록을 준다. 장소마다 이름, 분류, 전화, 주소가 있다</td><td class="nw">1단계 A</td></tr>
+<tr><td class="nw"><b>주소 묶음 R·J</b></td><td>이 건물을 가리키는 주소 표기 모음. R은 도로명, J는 지번. 원본 CSV의 주소와, 주소검색·네이버 지오코딩이 알려 준 주소를 모은다</td><td class="nw">A, 판정</td></tr>
+<tr><td class="nw"><b>장소 풀 P</b></td><td>키워드검색으로 찾은 장소 중 주소가 주소 묶음 R·J와 같거나 <b>건물에서 200m 안</b>인 것. 건물 주소·지번, 건물명, 건물명+"관리사무소"(반경 1km)로 검색한다</td><td class="nw">A, B</td></tr>
+<tr><td class="nw"><b>주소 일치 장소</b> <code>matched</code></td><td>장소 풀 P 중 주소가 주소 묶음 R·J와 <b>같은</b> 것. 같은 건물에 들어 있는 업소들이다</td><td class="nw">판정 <code>merge.py:192</code></td></tr>
+</table></div>
+
+<h2 id="name">1. 건물명 정하기 · <code>decide_name</code></h2>
+<p>원본 CSV에 건물명이 비어 있는 건물(<code>nt=1</code>)만 정한다. 이름끼리 서로 비교하거나 투표하지 않고, <b>위에서부터 차례로 보다가 처음 값이 나오면 그것을 쓴다.</b></p>
+<div class="tbl"><table>
+<tr><th>순위</th><th>출처</th><th>조건</th><th>이번 조회</th></tr>
+<tr><td class="num">1</td><td>카카오 <b>주소검색</b>의 건물명</td><td>도로명으로 찾은 것(<code>bnR</code>)을 먼저, 없으면 지번으로 찾은 것(<code>bnJ</code>)</td><td class="num">6,487</td></tr>
+<tr><td class="num">2</td><td><b>주소 일치 장소</b> 중 건물 자체 장소의 이름</td><td>분류가 <code>부동산</code>으로 시작하고, 부동산서비스·중개·고시원·고시텔·원룸·하숙·셰어·숙박이 아니고, 관리사무소 이름이 아닌 것 (<code>is_bldg_place</code>)</td><td class="num">368</td></tr>
+<tr><td class="num">3</td><td>집품 주소검색 건물명</td><td>주소가 일치한 결과이고, "이름 없음" 표시가 없고, 쓸 수 없는 이름이 아닐 것 (2장)</td><td class="num">430</td></tr>
+<tr><td class="num">4</td><td>KB부동산 단지명</td><td>괄호를 떼고(<code>clean_kb</code>) 쓸 수 없는 이름이 아닐 것 (2장)</td><td class="num">32</td></tr>
+<tr><td class="num">—</td><td>못 찾음 → <span class="chip c-warn">건물명 미해결</span></td><td></td><td class="num">1,456</td></tr>
+</table></div>
+<p class="src">합계 8,773건 = 조회 대상 중 건물명이 비어 있던 건물.</p>
+<div class="box"><b class="h">정한 뒤에 붙는 표시</b>
+건물명이 "약초동"처럼 <b>동네 이름 모양</b>으로 끝나면(가동·1동·A동 같은 동 표시는 제외) <span class="chip c-warn">건물명 검수 필요</span>를 붙인다 (<code>suspicious_name</code>).</div>
+
+<h2 id="filter">2. 쓸 수 없는 이름 거르기</h2>
+<p>집품과 KB는 이름이 없는 건물에도 이름 칸을 비워 두지 않고 주소나 건물 종류를 채워 돌려준다. 그대로 쓰면 결과에 "건물명: 다세대"가 들어가므로, 진짜 이름이 아닌 값은 버리고 다음 순위로 넘어간다.</p>
+
+<h3>집품 · 두 번 거른다</h3>
+<div class="two">
+<div class="card"><h4>① "이름 없음" 표시 <code>generic</code></h4>
+<p>B 단계에서 집품 결과를 받을 때, 이름이 비었거나 <b>"○○동/리/가 + 숫자"</b> 모양이면 표시한다 (<code>secondary.py:84</code>).</p>
+<p><b>1,222건</b> · <code>부평동 252-35</code>, <code>주안동 954-38</code>, <code>구월동 6-22</code></p></div>
+<div class="card"><h4>② 쓸 수 없는 이름 <code>bad_name</code></h4>
+<p>아래 표의 규칙에 걸리면 버린다.</p>
+<p><b>6건</b> · <code>주택</code>, <code>가동</code>, <code>A동</code>, <code>0735-0007</code></p></div>
+</div>
+
+<h3>KB · 다듬은 뒤 거른다</h3>
+<div class="two">
+<div class="card"><h4>① 끝의 괄호 떼기 <code>clean_kb</code></h4>
+<p>KB 단지명 끝에 붙은 번지 괄호, <code>(도)</code>·<code>(고층)</code>·<code>(저층)</code>·<code>(신)</code>·<code>(구)</code>, 끝의 마침표를 뗀다.</p>
+<p><b>3,590건</b> · <code>아인빌(85-1)</code> → <code>아인빌</code> · <code>건영빌라2차(137-3)</code> → <code>건영빌라2차</code> · <code>다세대(363)</code> → <code>다세대</code></p></div>
+<div class="card"><h4>② 쓸 수 없는 이름 <code>bad_name</code></h4>
+<p>괄호를 떼고 나서 건물 종류만 남으면 버린다.</p>
+<p><b>1,044건</b> · <code>다세대(68-3)</code>, <code>연립(868-11)</code>, <code>다세대(35-2)</code></p></div>
+</div>
+
+<h3><code>bad_name</code>이 버리는 값</h3>
+<div class="tbl"><table>
+<tr><th>규칙</th><th>예</th></tr>
+<tr><td>공백을 빼고 2글자 미만</td><td><code>가</code>, <code>A</code></td></tr>
+<tr><td>"○○동/리/가 + 숫자"로 시작 (주소 모양)</td><td><code>주안동 954-38</code></td></tr>
+<tr><td>건물 종류만 있음 (뒤에 괄호가 붙어도)</td><td><code>다세대</code>, <code>연립</code>, <code>도시형</code>, <code>아파트</code>, <code>주택</code>, <code>빌라</code>, <code>오피스텔</code>, <code>근린생활시설</code></td></tr>
+<tr><td>동 표시만 있음</td><td><code>가동</code>, <code>A동</code>, <code>101동</code></td></tr>
+<tr><td>숫자·하이픈·공백만 있음</td><td><code>0735-0007</code></td></tr>
+</table></div>
+<p>그래서 "건물명 미해결" 1,456건에는 집품·KB가 응답은 했지만 이런 값만 준 건물이 많이 들어 있다.</p>
+
+<h2 id="same">3. 같은 주소, 다른 이름 · 왜 이름 비교가 필요한가</h2>
+<p>카카오맵에는 건물만 등록되는 게 아니라 <b>그 건물에 있는 모든 업소가 그 건물 주소로</b> 등록된다. 그래서 주소가 같아도 이름은 제각각이고, 이게 오히려 일반적이다.</p>
+<p>실제 예 · <b>남동구 만수동 13</b>(만수주공4단지)의 주소 일치 장소:</p>
+<div class="tbl"><table>
+<tr><th>이름</th><th>분류</th><th>전화</th><th>쓰임</th></tr>
+<tr><td>만수주공4단지아파트 관리사무소</td><td>서비스,산업 &gt; 관리,운영 &gt; 건물관리사무소</td><td class="nw">032-461-2052</td><td><span class="chip c-ok">대표번호 1순위 후보</span></td></tr>
+<tr><td>만수주공4단지아파트</td><td>부동산 &gt; 주거시설 &gt; 아파트</td><td class="nw">없음</td><td><span class="chip c-new">건물명 2순위 · 대표번호 3순위 후보</span></td></tr>
+<tr><td>재롱둥이어린이집</td><td>교육,학문 &gt; 유아교육 &gt; 어린이집</td><td class="nw">032-467-…</td><td><span class="chip c-mute">대리 연락처 후보</span></td></tr>
+<tr><td>만수주공4단지 노인정</td><td>가정,생활 &gt; 친목 &gt; 노인정</td><td class="nw">032-462-…</td><td><span class="chip c-mute">대리 연락처 후보</span></td></tr>
+<tr><td>만수주공4단지아파트 전기차충전소</td><td>교통,수송 &gt; 전기차 충전소</td><td class="nw">없음</td><td><span class="chip c-bad">제외</span> (관리사무소·대리 연락처 모두)</td></tr>
+</table></div>
+<p>"아파트" 장소에는 번호가 없고 "관리사무소" 장소에 번호가 있다. 그래서 관리사무소 이름을 따로 찾아서 <b>이 건물의 관리사무소가 맞는지</b> 확인한다. 또 같은 주소에 있는 어린이집·노인정의 번호를 건물 대표번호로 넣지 않도록, 건물 자체 장소도 이름으로 확인한다.</p>
+<div class="stats">
+<div class="stat"><div class="v">44</div><div class="l">주소 일치 장소에 관리사무소 이름이 있는 건물</div></div>
+<div class="stat"><div class="v">13</div><div class="l">그중 관리사무소 번호가 있는 건물</div></div>
+<div class="stat"><div class="v">11</div><div class="l">건물 자체 장소 + 관리사무소 장소가 함께 있는 건물</div></div>
+</div>
+<p class="src">이번 대상은 빌라·다세대가 대부분이라 관리사무소 자체가 드물다.</p>
+
+<h2 id="phone">4. 대표번호 순위 · <code>decide_phone</code></h2>
+<p>원본 CSV에 대표번호가 비어 있는 건물(<code>pt=1</code>)만 정한다. 후보를 모두 모은 뒤 <b>순위가 가장 높은 것</b>을 쓴다. 이름 비교 3종이 어디에서 쓰이는지 표시했다.</p>
+
+<div class="prio"><div class="pl"><div class="pn">1</div><div class="pa">카카오 관리사무소</div><div class="pc">이번 7건</div></div><div class="pb">
+<p><b>주소 일치</b> 장소 중 이름에 관리사무소·관리사무실·관리실·관리단·관리소·관리센터·입주자대표회의가 있고(전기차·충전소 제외) 전화가 있는 곳.</p>
+<p>이름이 건물명과 <b><code>loose_eq</code>(지역어 지움)</b>로 같으면 1순위. 이름에 지하상가·시장·주차장·상가번영회·상인회가 있으면 "다른 시설 관리사무소"로 보류.</p></div></div>
+
+<div class="prio"><div class="pl"><div class="pn">2</div><div class="pa">이름은 다른 관리사무소</div><div class="pc">1순위에서 이름이 안 맞은 것</div></div><div class="pb">
+<p>번호가 <b>KB 관리사무소 번호와 같으면</b> 2순위.</p>
+<p>아니면 100m 안일 때 <b>네이버로 교차 확인</b>해서 위치가 맞으면 2순위. 100m를 넘거나 네이버가 안 맞으면 <span class="chip c-warn">관리사무소 후보 검수 필요</span>로 보류.</p></div></div>
+
+<div class="prio"><div class="pl"><div class="pn">3</div><div class="pa">카카오 건물 대표번호</div><div class="pc">이번 12건</div></div><div class="pb">
+<p><b>주소 일치</b> 장소 중 관리사무소가 아니고, 이름이 건물명과 <b><code>name_eq</code></b>로 같고, 고시원·고시텔·원룸·숙박이 아닌 곳의 번호.</p></div></div>
+
+<div class="prio"><div class="pl"><div class="pn">4</div><div class="pa">KB부동산 관리사무소</div><div class="pc">이번 265건</div></div><div class="pb">
+<p>KB 단지정보의 관리사무소 전화.</p></div></div>
+
+<div class="prio"><div class="pl"><div class="pn">5</div><div class="pa">주소는 다른 같은 이름</div><div class="pc">이번 0건</div></div><div class="pb">
+<p>장소 풀 P 중 <b>주소는 다르지만 100m 안</b>이고 이름이 건물명과 <b><code>exact_core_eq</code></b>(완전히 같음)인 곳. 200m 안에 같은 이름 건물이 또 있으면 넣지 않고 보류.</p></div></div>
+
+<div class="prio"><div class="pl"><div class="pn">6</div><div class="pa">114On</div><div class="pc">114On 추가 조회 때만</div></div><div class="pb">
+<p>114On 결과의 번호.</p></div></div>
+
+<div class="box warn"><b class="h">전국 대표번호는 자동으로 넣지 않음</b>
+3순위·5순위 후보가 15xx·16xx·18xx 번호면 분양·상담 번호일 수 있어 보류하고 <span class="chip c-warn">전국 대표번호 검수 필요</span>를 붙인다.</div>
+<p class="src">이번 조회의 대표번호 대상 19,354건 중 확정 284건(1순위 7 · 3순위 12 · 4순위 265). 나머지는 대리 연락처(같은 주소의 점포, 주변 공인중개사)로 넘어간다. 대리 연락처는 이름을 비교하지 않고 <b>분류</b>로 순위를 매긴다(공인중개사 → 헬스장·노래방·PC방 → 병원·약국·학원 → 식당 → 기타).</p>
+
+<h2 id="cmp">5. 이름 비교 3종</h2>
+<p>세 비교는 모두 "공백, 아파트, 오피스텔, 빌라, 주택, 괄호 안 내용"을 먼저 지운다. 다른 점은 <b>무엇을 더 지우는지</b>와 <b>얼마나 같아야 같다고 보는지</b>다.</p>
+<div class="tbl"><table>
+<tr><th>비교</th><th>쓰는 곳</th><th>더 지우는 것</th><th>같다고 보는 기준</th><th>막으려는 것</th></tr>
+<tr><td class="nw"><code>loose_eq</code><br><span class="chip c-ok">가장 느슨</span></td><td>대표번호 1순위<br>관리사무소 이름 ↔ 건물명</td><td>관리사무소 표시와 그 뒤, 인천, 주상복합, ○차, ○단지, <b>지역어</b></td><td><b>연달아 붙은 두 글자가 하나라도 겹치면</b> 같음</td><td>같은 주소에 이웃 단지·상가 관리사무소가 섞이는 것</td></tr>
+<tr><td class="nw"><code>name_eq</code><br><span class="chip c-new">중간</span></td><td>대표번호 3순위, 시설 건물 판정<br>건물 자체 장소 ↔ 건물명</td><td>없음</td><td>완전히 같거나, 짧은 쪽이 긴 쪽에 들어 있고 <b>길이가 70% 이상</b></td><td><b>같은 주소의 점포 번호</b>를 건물 번호로 넣는 것</td></tr>
+<tr><td class="nw"><code>exact_core_eq</code><br><span class="chip c-bad">가장 엄격</span></td><td>대표번호 5순위<br>근처 장소 ↔ 건물명</td><td>관리사무소 표시와 그 뒤</td><td><b>완전히 같아야</b> 같음</td><td>주소가 다른 근처 건물</td></tr>
+</table></div>
+
+<h3><code>loose_eq</code>가 느슨한 이유</h3>
+<p>관리사무소 이름은 "삼성관리사무소", "주안삼성아파트 관리실", "구월 힐스테이트&amp;롯데캐슬골드아파트 관리사무실"처럼 줄이거나 다르게 쓰는 경우가 많다. 완전히 같아야 한다고 하면 대부분 놓친다.</p>
+
+<h3><code>name_eq</code>가 70% 기준인 이유</h3>
+<ul>
+<li>"남산주택"과 "남산주택(신관)"처럼 표기만 약간 다른 것은 같다고 본다.</li>
+<li>"만수주공4단지 노인정"처럼 건물명이 들어 있지만 <b>훨씬 긴</b> 다른 업소는 걸러 낸다. 짧은 쪽이 긴 쪽의 70%에 못 미치기 때문이다.</li>
+</ul>
+
+<h2 id="region">6. 지역어 · <code>region_words</code></h2>
+<p>지역어는 <code>loose_eq</code>에서 비교하기 전에 지우는 동네 이름 목록이다. 동마다 다르게 만든다.</p>
+<ol class="steps">
+<li><b>구·동 이름에서 자동으로 만든다.</b> 끝의 숫자와 구·군·동·읍·면·리·가를 떼고 2글자 이상이면 넣는다.<br><code>미추홀구</code> → <code>미추홀</code> · <code>주안동</code> → <code>주안</code> · <code>강화읍 관청리</code> → <code>강화</code>, <code>관청</code></li>
+<li><b><code>수집설정.toml [region.extra_words]</code>의 단어를 더한다.</b> 키 <code>"주안동"</code>은 모든 구의 주안동에, <code>"미추홀구 주안동"</code>은 그 구의 주안동에만 적용된다. 지금은 <code>"주안동" = ["관교"]</code> 하나뿐이다(원래 코드에 박혀 있던 것을 설정으로 옮김).</li>
+<li><b>긴 단어부터 지운다.</b> 미추홀구 주안동이면 <code>미추홀</code> → <code>관교</code> → <code>주안</code>.</li>
+</ol>
+
+<h3>지우는 순서 · 예시 (지어낸 이름)</h3>
+<p>미추홀구 주안동의 건물 <b>"주안 동아빌라"</b>와, 같은 주소에서 찾은 <b>"주안한신아파트 관리사무소"</b>(실제로는 다른 건물):</p>
+<div class="tbl"><table>
+<tr><th>단계</th><th>관리사무소 이름</th><th>건물명</th></tr>
+<tr><td>원래</td><td><code>주안한신아파트 관리사무소</code></td><td><code>주안 동아빌라</code></td></tr>
+<tr><td>관리사무소 표시와 그 뒤 지움</td><td><code>주안한신아파트</code></td><td>(해당 없음)</td></tr>
+<tr><td>흔한 단어 지움</td><td><code>주안한신</code></td><td><code>주안동아</code></td></tr>
+<tr><td>지역어를 <b>안 지우면</b></td><td colspan="2">"주안"이 겹침 → <span class="chip c-bad">같은 건물로 판정</span> → 한신아파트 관리사무소 번호가 1순위로 들어감</td></tr>
+<tr><td>지역어를 <b>지우면</b></td><td><code>한신</code></td><td><code>동아</code> → 겹치는 두 글자 없음 → <span class="chip c-ok">다른 건물</span></td></tr>
+</table></div>
+<p>1순위에서 빠진 번호는 2순위(KB 번호 일치, 네이버 확인)로 넘어가거나 사람 확인으로 보류된다.</p>
+
+<h3>언제 지역어를 추가하나</h3>
+<ul>
+<li>구·동 이름에서 자동으로 나오지 않는데 그 동 건물 이름에 흔히 들어가는 단어가 있을 때. 예: 연수구 송도동의 <code>"송도국제"</code>.</li>
+<li>결과에서 다른 건물 관리사무소 번호가 1순위로 자꾸 들어가는 동이 보일 때.</li>
+<li><code>수집설정.toml</code>은 작업 ID에 들어가지 않는다. 추가한 뒤 API를 다시 부르지 않고 <code>run.py export</code>로 판정만 다시 하면 된다.</li>
+</ul>
+
+<h2 id="why">7. 왜 <code>loose_eq</code>에서만 지역어를 지우나</h2>
+<p>지역어를 지우면 오판은 줄지만 <b>이름에서 남는 정보도 줄어든다.</b> 어느 쪽이 더 큰지는 규칙이 얼마나 느슨한지에 달려 있다.</p>
+<div class="two">
+<div class="card"><h4><code>loose_eq</code> · 지워야 이득</h4>
+<p>두 글자만 겹쳐도 같다고 본다. "주안한신"과 "주안동아"가 "주안" 때문에 같다고 나온다. 지역어를 지우면 이 오판이 사라진다.</p></div>
+<div class="card"><h4><code>name_eq</code> · 지우면 손해</h4>
+<p>거의 같아야 같다고 본다. "주안한신"과 "주안동아"는 지우지 않아도 이미 다르다. 지우면 얻는 것은 적고, 동네 이름이 곧 건물명인 경우를 놓친다.</p></div>
+</div>
+
+<h3>실제 데이터로 시뮬레이션 · <code>name_eq</code>에 지역어를 지웠다면</h3>
+<div class="stats">
+<div class="stat"><div class="v">12,630</div><div class="l">지금 <code>name_eq</code>가 같다고 본 쌍 (주소 일치 장소 ↔ 건물명)</div></div>
+<div class="stat"><div class="v">130</div><div class="l">지역어를 지우면 판정이 바뀌는 쌍</div></div>
+</div>
+<div class="tbl"><table>
+<tr><th>지역</th><th>건물명</th><th>장소 이름</th><th>지금</th><th>지역어를 지우면</th></tr>
+<tr><td class="nw">계양구 효성동</td><td>효성빌라</td><td>효성빌라</td><td><span class="chip c-ok">같음</span></td><td>"효성" 지움 → 빈 이름 → <span class="chip c-bad">다름</span></td></tr>
+<tr><td class="nw">계양구 계산동</td><td>계산빌라</td><td>계산빌라</td><td><span class="chip c-ok">같음</span></td><td><span class="chip c-bad">다름</span></td></tr>
+<tr><td class="nw">계양구 방축동</td><td>방축빌라</td><td>방축빌라</td><td><span class="chip c-ok">같음</span></td><td><span class="chip c-bad">다름</span></td></tr>
+<tr><td class="nw">강화군 남산리</td><td>남산주택</td><td>남산주택</td><td><span class="chip c-ok">같음</span></td><td><span class="chip c-bad">다름</span></td></tr>
+<tr><td class="nw">계양구 계산동</td><td>계양파크빌라</td><td>계양파크빌</td><td><span class="chip c-ok">같음</span></td><td><span class="chip c-bad">다름</span></td></tr>
+<tr><td class="nw">계양구 병방동</td><td>병방동 영무예다음</td><td>병방영무예다음아파트</td><td><span class="chip c-mute">다름</span></td><td><span class="chip c-ok">같음</span></td></tr>
+<tr><td class="nw">강화군 초지리</td><td>강화 해상공원</td><td>해상공원</td><td><span class="chip c-mute">다름</span></td><td><span class="chip c-ok">같음</span></td></tr>
+</table></div>
+<p>지역어를 지워야 맞는 경우("병방동 영무예다음")도 있지만, 맞게 판정하던 것을 놓치는 경우가 더 많다. 동네 이름을 건물명으로 쓰는 빌라가 많기 때문이다.</p>
+<p><code>loose_eq</code>도 같은 약점이 있다("효성빌라"는 지역어를 지우면 빈 이름이 되어 1순위가 될 수 없다). 그래도 1순위에서 놓친 번호는 KB 번호 확인, 네이버 확인, 사람 확인으로 넘어가는 장치가 있고, 느슨한 규칙의 오판을 막는 효과가 더 크다고 보고 지운다.</p>
+
+<h2 id="real">8. 실제 사례 · <code>loose_eq</code>가 쓰인 10쌍 전부</h2>
+<p>이번 조회에서 주소 일치 장소에 번호가 있는 관리사무소가 있어 <code>loose_eq</code> 비교가 실제로 일어난 것은 10쌍이다. <b>10쌍 모두 지역어를 지우든 안 지우든 판정이 같았다.</b> 이번 데이터에서는 지역어가 결과를 바꾼 경우가 없다.</p>
+<div class="tbl"><table>
+<tr><th>지역</th><th>건물명</th><th>같은 주소의 관리사무소</th><th>정리한 뒤</th><th>판정</th></tr>
+<tr><td class="nw">남동구 만수동</td><td>만수주공4단지아파트</td><td>만수주공4단지아파트 관리사무소</td><td><code>주공</code> ↔ <code>주공</code></td><td><span class="chip c-ok">같음</span></td></tr>
+<tr><td class="nw">서구 청라동</td><td>청라자이</td><td>청라자이아파트 관리사무소</td><td><code>자이</code> ↔ <code>자이</code></td><td><span class="chip c-ok">같음</span></td></tr>
+<tr><td class="nw">남동구 구월동</td><td>힐스테이트롯데캐슬골드1단지아파트</td><td>구월 힐스테이트&amp;롯데캐슬골드아파트 관리사무실</td><td><code>힐스테이트&amp;롯데캐슬골드</code> ↔ <code>힐스테이트롯데캐슬골드</code></td><td><span class="chip c-ok">같음</span></td></tr>
+<tr><td class="nw">남동구 만수동</td><td>삼환아파트2단지</td><td>삼환2차아파트 관리사무소</td><td><code>삼환</code> ↔ <code>삼환</code></td><td><span class="chip c-ok">같음</span></td></tr>
+<tr><td class="nw">연수구 동춘동</td><td>대우삼환아파트</td><td>대우삼환아파트 관리사무소</td><td><code>대우삼환</code> ↔ <code>대우삼환</code></td><td><span class="chip c-ok">같음</span></td></tr>
+<tr><td class="nw">남동구 간석동</td><td>소담유치원</td><td>간석래미안자이아파트 관리사무소</td><td><code>래미안자이</code> ↔ <code>소담유치원</code></td><td><span class="chip c-ok">다름</span></td></tr>
+<tr><td class="nw">연수구 옥련동</td><td>태평양오피스텔</td><td>아리랑빌딩 관리사무소</td><td><code>아리랑빌딩</code> ↔ <code>태평양</code></td><td><span class="chip c-ok">다름</span></td></tr>
+<tr><td class="nw">남동구 만수동</td><td>햇빛마을벽산아파트<b>유치원</b></td><td>햇빛마을벽산아파트 관리사무소</td><td><code>햇빛마을벽산</code> ↔ <code>햇빛마을벽산유치원</code></td><td><span class="chip c-warn">같음 ⚠</span></td></tr>
+<tr><td class="nw">연수구 선학동</td><td>선학동 시영아파트 <b>상가</b></td><td>선학시영아파트 관리소</td><td><code>시영</code> ↔ <code>동시영상가</code></td><td><span class="chip c-warn">같음 ⚠</span></td></tr>
+<tr><td class="nw">연수구 선학동</td><td>선학동 시영아파트 <b>유치원</b></td><td>선학시영아파트 관리소</td><td><code>시영</code> ↔ <code>동시영유치원</code></td><td><span class="chip c-warn">같음 ⚠</span></td></tr>
+</table></div>
+
+<h2 id="walk">9. 건물 하나 따라가기 · 미추홀구 주안동 502-11</h2>
+<p>이번 조회에서 B 단계(KB·집품)가 시간 초과로 실패한 건물(작업 안 번호 4877)이다. 원본에 건물명과 대표번호가 모두 비어 있다(<code>nt=1</code>, <code>pt=1</code>).</p>
+<ol class="steps">
+<li><b>1단계 A · 카카오 주소검색</b> · 도로명 <code>미추홀대로669번길 27</code>, 지번 <code>주안동 502-11</code> 모두 성공. 건물명 <b>서우베스트빌라2차</b>를 준다. 주소 묶음 R·J에 이 주소들이 들어간다.</li>
+<li><b>1단계 A · 카카오 키워드검색</b> · 주소로 검색해 주소 일치 장소 1곳(서우베스트빌라2차, 분류 <code>부동산 &gt; 주거시설 &gt; 빌라,주택</code>, 번호 없음). 건물명 재검색도 1건.</li>
+<li><b>건물명 정하기</b> · 1순위(주소검색 건물명)에 값이 있으므로 <b>서우베스트빌라2차</b>로 확정. 집품·KB 이름은 보지 않는다.</li>
+<li><b>대표번호 1순위</b> · 주소 일치 장소에 관리사무소가 없으므로 <code>loose_eq</code> 비교가 일어나지 않는다. (있었다면 <code>서우베스트빌라2차</code> → 빌라·2차 지움 → <code>서우베스트</code>와 비교)</li>
+<li><b>대표번호 3순위</b> · 건물 자체 장소 "서우베스트빌라2차"는 <code>name_eq</code>로 같지만 <b>번호가 없어</b> 후보가 되지 않는다.</li>
+<li><b>대표번호 4순위</b> · KB 조회가 시간 초과로 실패해 KB 번호가 없다 → <span class="chip c-warn">2단계 조회 오류</span>.</li>
+<li><b>결과</b> · 대표번호 없음. 대리 연락처로 주변 공인중개사 3곳(한라산공인중개사사무소 131m 등). <code>run_config.py 조회</code>를 다시 실행하면 이 건물의 B 단계만 다시 조회한다.</li>
+</ol>
+<div class="box new"><b class="h">B 단계가 정상이었다면 · 이름 거르기</b>
+1·2순위가 비어 있었고 집품이 <code>주안동 502-11</code>을 줬다면 주소 모양이라 버린다. KB가 <code>다세대(502-11)</code>를 줬다면 괄호를 떼서 <code>다세대</code>가 되고, 건물 종류만 남아 버린다. 그러면 <span class="chip c-warn">건물명 미해결</span>이 된다.</div>
+
+<h2 id="watch">10. 알아 둘 점 (고치지 않음, 기록만)</h2>
+<div class="box warn"><b class="h">단지 안 유치원·상가가 아파트 관리사무소 번호를 받음</b>
+8장의 ⚠ 3건. 건물명에 단지명이 들어 있으면 두 글자가 겹쳐 같은 건물로 본다. 단지 관리사무소가 상가도 관리하는 경우가 있어 꼭 틀린 것은 아니다. 영업 대상으로 맞는 번호인지 정하면 규칙에 반영할 수 있다.</div>
+<div class="box warn"><b class="h">"선학동"에서 "선학"만 지워짐</b>
+건물명에 동 이름이 "○○동"으로 통째로 들어 있으면 지역어 "선학"만 지워지고 "동"이 남는다(<code>동시영상가</code>). 이번에는 판정에 영향이 없었다.</div>
+<div class="box warn"><b class="h">관리사무소가 아닌 "관리센터"</b>
+남동구 만수동 967-13의 "동물보육원 인천관리센터"처럼 관리사무소가 아닌 업소도 "관리센터" 글자 때문에 관리사무소 후보로 잡힌다. 이번에는 이름이 달라 걸러졌다.</div>
+<div class="box"><b class="h">규칙을 바꿀 때</b>
+판정 코드(<code>pipeline/judge/</code>)를 고치면 코드 해시가 바뀌어 기존 작업을 이어 돌리거나 114On을 붙일 수 없다. 고치기 전과 후에 기존 작업으로 <code>run.py export</code>를 돌려 <code>results.json</code>이 의도한 대로만 바뀌었는지 비교한다. 지역어만 바꿀 때는 <code>수집설정.toml</code>이라 코드 해시는 그대로다.</div>
+
+<h2 id="code">11. 코드 위치</h2>
+<div class="tbl"><table>
+<tr><th>함수·값</th><th>위치</th><th>하는 일</th></tr>
+<tr><td><code>decide_name</code></td><td class="nw"><code>pipeline/judge/merge.py:38</code></td><td>건물명 순위대로 고르기</td></tr>
+<tr><td><code>decide_phone</code></td><td class="nw"><code>pipeline/judge/merge.py:62</code></td><td>대표번호 후보 모으고 순위 정하기</td></tr>
+<tr><td><code>proxies</code></td><td class="nw"><code>pipeline/judge/merge.py:128</code></td><td>대리 연락처(분류 순위, 이름 비교 없음)</td></tr>
+<tr><td>주소 일치 판정</td><td class="nw"><code>pipeline/judge/merge.py:192</code></td><td>장소 풀 P 중 주소 묶음 R·J와 같은 것</td></tr>
+<tr><td><code>name_eq</code> · <code>loose_eq</code> · <code>exact_core_eq</code></td><td class="nw"><code>pipeline/judge/common.py:91 · 121 · 127</code></td><td>이름 비교 3종</td></tr>
+<tr><td><code>region_words</code> · <code>_extra_words</code></td><td class="nw"><code>pipeline/judge/common.py:107 · 103</code></td><td>지역어 목록</td></tr>
+<tr><td><code>is_mg</code> · <code>strip_mg</code></td><td class="nw"><code>pipeline/judge/common.py:82 · 84</code></td><td>관리사무소 이름 판별, 관리사무소 표시 떼기</td></tr>
+<tr><td><code>is_bldg_place</code></td><td class="nw"><code>pipeline/judge/common.py:134</code></td><td>건물 자체 장소 판별 (건물명 2순위)</td></tr>
+<tr><td><code>clean_kb</code> · <code>bad_name</code> · <code>suspicious_name</code></td><td class="nw"><code>pipeline/judge/common.py:141 · 147 · 157</code></td><td>KB 이름 다듬기, 쓸 수 없는 이름, 동네 이름 모양</td></tr>
+<tr><td>집품 <code>generic</code></td><td class="nw"><code>pipeline/secondary.py:84</code></td><td>집품 이름이 주소 모양이면 "이름 없음" 표시</td></tr>
+<tr><td>장소 풀 P 만들기</td><td class="nw"><code>pipeline/providers/kakao.py:105</code></td><td>주소검색, 키워드검색, 건물명 재검색, 200m 거르기</td></tr>
+<tr><td><code>[region.extra_words]</code></td><td class="nw"><code>수집설정.toml</code></td><td>동별로 더하는 지역어</td></tr>
+</table></div>
+</main>
+</div>
+</body></html>
