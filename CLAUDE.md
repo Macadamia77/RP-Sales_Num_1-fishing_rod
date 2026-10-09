@@ -10,7 +10,7 @@
 
 - 설정 파일 방식: `python run_config.py 확인|조회|114|상태` (`조회설정.toml`의 `src`, `out`, `[["조회"]]`)
 - 명령줄 방식: `python run.py list|run|run114|export|status ...`
-- 이 PC에서는 `python`이 Store 바로가기라 `C:\Users\kimro\anaconda3\python.exe`로 부르고 `PYTHONIOENCODING=utf-8`을 준다.
+- (사용자의 원래 PC 기준. 다른 PC에서는 그 PC의 파이썬을 확인해서 쓴다) 이 PC에서는 `python`이 Store 바로가기라 전용 conda 환경 `fishing-rod`의 `C:\Users\kimro\anaconda3\envs\fishing-rod\python.exe`로 부르고 `PYTHONIOENCODING=utf-8`을 준다. VS Code 인터프리터도 `fishing-rod`.
 - `확인`/`list`는 API를 호출하지 않는다. `조회`/`run`은 실제 API를 부르고 오래 걸리므로 백그라운드로 돌린다.
 - 시험: `python -m unittest discover -s tests` (인터넷 불필요)
 

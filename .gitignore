@@ -9,3 +9,4 @@ results/
 *.csv
 결과물/
 설명서/
+.vscode/settings.json
